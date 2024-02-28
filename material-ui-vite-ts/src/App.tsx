@@ -1,32 +1,24 @@
-import * as React from 'react';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
+import { Box, Container, Stack, Typography } from '@mui/material';
+import { Copyright } from './Copyright';
 import ProTip from './ProTip';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
-}
+import FileSystemNavigator from './components/FileSystemNavigator';
+import SearchAppBar from './components/Search';
 
 export default function App() {
-  return (
-    <Container maxWidth="sm">
+  return <Container maxWidth="sm">
+    <SearchAppBar />
+    <Stack direction='row'>
+
+      <FileSystemNavigator />
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
           Material UI Vite.js example in TypeScript
         </Typography>
-        <ProTip />
-        <Copyright />
       </Box>
-    </Container>
-  );
+    </Stack>
+    <footer>
+      <ProTip />
+      <Copyright />
+    </footer>
+  </Container>
 }
