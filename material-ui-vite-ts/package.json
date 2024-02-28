@@ -23,6 +23,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "arkit": "^1.6.4",
     "typescript": "latest",
     "vite": "latest"
   }
