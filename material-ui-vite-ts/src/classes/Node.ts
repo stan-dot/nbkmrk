@@ -1,10 +1,16 @@
+import { MockBookmarkTreeNode } from "./mockdata";
 
 export default class Node {
-  object: chrome.bookmarks.BookmarkTreeNode | undefined
+  object: chrome.bookmarks.BookmarkTreeNode | MockBookmarkTreeNode
   domain: string | undefined;
   isFolder: boolean;
 
   constructor(item: chrome.bookmarks.BookmarkTreeNode) {
+    const o: MockBookmarkTreeNode = {
+      title: "",
+      id: ""
+    };
+    this.object = o;
     this.domain = item.url?.substring(0, 4); // todo correct this
     this.isFolder = !!!(item.url)
 

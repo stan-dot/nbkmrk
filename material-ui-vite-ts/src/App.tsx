@@ -4,6 +4,7 @@ import ProTip from './ProTip';
 import FileSystemNavigator from './components/FileSystemNavigator';
 import SearchAppBar from './components/Search';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import ContextMenu from './components/ContextMenu';
 
 const rows: GridRowsProp = [
   { id: 1, col1: 'Hello', col2: 'World' },
@@ -29,6 +30,7 @@ export default function App() {
         <div style={{ height: 300, width: '100%' }}>
           <DataGrid rows={rows} columns={columns} />
         </div>
+        <ContextMenu />
       </Box>
     </Stack>
     <footer>
