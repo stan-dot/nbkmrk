@@ -1,5 +1,14 @@
 import { MockBookmarkTreeNode } from "./mockdata";
 
+export const defaultTracingRegexes: RegExp[] = [
+  /((&|\?)ref=)/ig,
+  /((&|\?)mtrref)/ig,
+  /((&|\?)utm_medium=)+/gi,
+  /(~#text)/ig,
+  /((&|\?)utm_source)/ig,
+  /((&|\?)utm_campaign)/ig,
+];
+
 export default class Node {
   object: chrome.bookmarks.BookmarkTreeNode | MockBookmarkTreeNode
   domain: string | undefined;
@@ -29,4 +38,7 @@ export default class Node {
 
   }
 
+  public async removeTracingLink(): Promise<number> {
+    return 0;
+  }
 }

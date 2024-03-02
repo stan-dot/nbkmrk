@@ -17,7 +17,8 @@
     "@mui/x-tree-view": "^6.17.0",
     "@types/chrome": "^0.0.262",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-draggable": "^4.4.6"
   },
   "devDependencies": {
     "@types/react": "latest",

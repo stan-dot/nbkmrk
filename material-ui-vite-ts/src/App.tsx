@@ -1,10 +1,11 @@
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Copyright } from './Copyright';
 import ProTip from './ProTip';
-import FileSystemNavigator from './components/FileSystemNavigator';
-import SearchAppBar from './components/Search';
+import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
+import SearchAppBar from './features/search/Search';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import ContextMenu from './components/ContextMenu';
+import DraggableDialog from './components/DraggableDialog';
 
 const rows: GridRowsProp = [
   { id: 1, col1: 'Hello', col2: 'World' },
@@ -23,6 +24,7 @@ export default function App() {
     <Stack direction='row'>
 
       <FileSystemNavigator />
+      <DraggableDialog />
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
           Material UI Vite.js example in TypeScript
