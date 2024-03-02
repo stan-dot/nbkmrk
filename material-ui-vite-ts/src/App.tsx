@@ -1,11 +1,7 @@
-import { Box, Container, Stack, Typography } from '@mui/material';
-import { Copyright } from './Copyright';
-import ProTip from './ProTip';
-import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
-import SearchAppBar from './features/search/Search';
+import { Container, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import ContextMenu from './components/ContextMenu';
-import DraggableDialog from './components/DraggableDialog';
+import SearchAppBar from './features/search/SearchAppBar';
+import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
 
 const rows: GridRowsProp = [
   { id: 1, col1: 'Hello', col2: 'World' },
@@ -19,25 +15,21 @@ const columns: GridColDef[] = [
 ];
 
 export default function App() {
-  return <Container maxWidth="sm">
-    <SearchAppBar />
-    <Stack direction='row'>
-
-      <FileSystemNavigator />
-      <DraggableDialog />
-      <Box sx={{ my: 4 }}>
+  return <Container maxWidth="xl">
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <SearchAppBar />
+      </Grid>
+      <Grid item xs={2}>
+        <FileSystemNavigator />
+      </Grid>
+      <Grid item xs={8}>
         <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-          Material UI Vite.js example in TypeScript
+          Bookmarks data grid
         </Typography>
-        <div style={{ height: 300, width: '100%' }}>
-          <DataGrid rows={rows} columns={columns} />
-        </div>
-        <ContextMenu />
-      </Box>
-    </Stack>
-    <footer>
-      <ProTip />
-      <Copyright />
-    </footer>
+        <DataGrid rows={rows} columns={columns} />
+      </Grid>
+      <Grid item xs={2}></Grid>
+    </Grid>
   </Container>
 }

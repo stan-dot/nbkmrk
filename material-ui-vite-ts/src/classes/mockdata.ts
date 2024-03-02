@@ -1,3 +1,9 @@
+import Node from '../classes/Node';
+
+export function loadData(mock: boolean = true): Node[] {
+  return []
+}
+
 
 export interface MockBookmarkTreeNode {
   /** Optional. The 0-based position of this node within its parent folder.  */

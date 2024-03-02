@@ -1,7 +1,9 @@
 import * as React from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import DraggableDialog from '../../components/DraggableDialog';
 
 export default function PositionedMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -22,7 +24,7 @@ export default function PositionedMenu() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        Dashboard
+        <MenuIcon />
       </Button>
       <Menu
         id="demo-positioned-menu"
@@ -42,6 +44,7 @@ export default function PositionedMenu() {
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onLostPointerCapture={handleClose}><DraggableDialog /></MenuItem>
       </Menu>
     </div>
   );
