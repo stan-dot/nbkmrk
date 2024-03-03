@@ -2,6 +2,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import SearchAppBar from './features/search/SearchAppBar';
 import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
+import { useEffect, useState } from 'react';
 
 const rows: GridRowsProp = [
   { id: 1, col1: 'Hello', col2: 'World' },
@@ -15,10 +16,30 @@ const columns: GridColDef[] = [
 ];
 
 export default function App() {
+
+
+  const urlSearchString = window.location.search;
+  const [readPath, setReadPath] = useState<string>("")
+
+  // alert(`pathname: ${window.location.pathname}`)
+  const params = new URLSearchParams(urlSearchString);
+  console.log('search params: ', params);
+  useEffect(() => {
+    const path = window.location.pathname;
+    console.log('pathname: ', path)
+    setReadPath(path)
+    const urlSearchString = window.location.search;
+    const params = new URLSearchParams(urlSearchString);
+    console.log('search params: ', params);
+  }, []);
+
   return <Container maxWidth="xl">
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <SearchAppBar />
+        <div id="pathBar">
+          {readPath}
+        </div>
       </Grid>
       <Grid item xs={2}>
         <FileSystemNavigator />
