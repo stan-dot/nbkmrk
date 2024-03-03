@@ -1,6 +1,8 @@
 
 # MVP features
 - [ ] MVP = all features of the nromal version
+
+- [ ] add tests https://vitest.dev/guide/
 - [ ] search results table
 - [ ] create a node
 - [ ] delete a node
@@ -13,7 +15,7 @@
 - [ ] make some properties async
 
 - [ ] clipboard facade
-  - [ ] cut to clipboard
+  - [ ] cut to clipboard - with json serialize
   - [ ] drag and drop contents
   - [ ] copy bookmark to Uri - just using json
 

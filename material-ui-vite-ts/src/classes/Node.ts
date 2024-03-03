@@ -41,4 +41,8 @@ export default class Node {
   public async removeTracingLink(): Promise<number> {
     return 0;
   }
+
+  public serialize(): string{
+    return JSON.stringify(self);
+  }
 }
