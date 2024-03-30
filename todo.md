@@ -11,12 +11,8 @@
 - [ ] create a node
 - [ ] imperatively change state of the path https://chat.openai.com/c/e1039576-0fdd-47f1-914a-3f26d199253a
 `
-function changePathWithoutReload(newPath) {
-  window.history.pushState({}, '', newPath);
-}
-
-// Call this function with the new path
-changePathWithoutReload('/new-path');
+here for reading the local bookmarks page
+https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
 `
 - [ ] delete a node
 - [ ] use optimistic updates
@@ -38,5 +34,4 @@ changePathWithoutReload('/new-path');
 - [ ] path
 - [ ] settings menu - another dialog with saved cookies
 - [ ] remove context tracing links
-
 

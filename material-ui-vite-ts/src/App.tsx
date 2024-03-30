@@ -18,7 +18,12 @@ const columns: GridColDef[] = [
   { field: 'col2', headerName: 'Column 2', width: 150 },
 ];
 
+function changePathWithoutReload(newPath: string) {
+  window.history.pushState({}, '', newPath);
+}
+
 export default function App() {
+
 
   const [params, setParams] = useState<URLSearchParams>(new URLSearchParams(window.location.search))
   const [readPath, setReadPath] = useState<string>("")
@@ -28,6 +33,7 @@ export default function App() {
     const path = window.location.pathname;
     console.log('pathname: ', path)
     setReadPath(path)
+    changePathWithoutReload(path);
     const urlSearchString = window.location.search;
     const p = new URLSearchParams(urlSearchString);
     console.log('search params: ', p);
