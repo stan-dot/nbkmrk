@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@electric-sql/pglite':
+    specifier: ^0.1.1
+    version: 0.1.1
   '@emotion/react':
     specifier: latest
     version: 11.11.4(@types/react@18.2.60)(react@18.2.0)
@@ -300,6 +303,10 @@ packages:
       is-absolute: 1.0.0
       is-negated-glob: 1.0.0
     dev: true
+
+  /@electric-sql/pglite@0.1.1:
+    resolution: {integrity: sha512-7tJNIJBXuiuVl6Y9ehwv9mTlQlPeQbQ7wIKn49eorToPlNnkYnBzVWpOOTkNqv6Xu4dz75vl3S/9BmlfqCqM1w==}
+    dev: false
 
   /@emotion/babel-plugin@11.11.0:
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
