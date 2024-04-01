@@ -67,7 +67,8 @@ function NewBookmarkForm({ parentId }: NewBookmarkFormProps) {
   const [title, setTitle] = useState<string>("");
 
   return <form onSubmit={() => {
-    addBookmark({ parentId, title, url });
+    const createArg: chrome.bookmarks.BookmarkCreateArg = { parentId, title, url };
+    addBookmark(createArg);
   }}>
 
     <FormControl>

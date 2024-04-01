@@ -1,7 +1,7 @@
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { useBookmarksContext } from './BookmarksProvider';
 import { Menu, MenuItem } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Node from './classes/Node';
 import { Bounce, toast } from 'react-toastify';
 import { MainTableRow } from './components/NodeComponent';
@@ -72,11 +72,15 @@ export function MainTable() {
     // todo that is for optimistic updates
     handleClose();
   };
-  const { bookmarks, deleteBookmark } = useBookmarksContext();
+  const { bookmarks, fetchBookmarks } = useBookmarksContext();
 
+  const [newBookmarks, setNewBookmarks] = useState<MainTableRow[]>([])
   useEffect(() => {
-
-
+    const fetchData = async () => {
+      await fetchBookmarks();
+      const finalRows = data.map(b => b.intoRow());
+      setNewBookmarks(finalRows);
+    }
   }, [])
 
 
@@ -84,7 +88,7 @@ export function MainTable() {
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
         columns={columns}
-        rows={rows}
+        rows={finalRows}
         slotProps={{
           row: {
             onContextMenu: handleContextMenu,

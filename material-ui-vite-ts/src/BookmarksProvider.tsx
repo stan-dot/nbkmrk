@@ -37,18 +37,23 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
   const [bookmarks, setBookmarks] = useState<Node[]>([]); // State to hold the list of bookmarks
 
   // Function to fetch bookmarks
-  const fetchBookmarks = async () => {
-    if (dev && db) {
-      const transaction = db.transaction('bookmarks', 'readonly');
-      const store = transaction.objectStore('bookmarks');
-      const request = store.getAll();
+  const fetchBookmarks = async (newDb?: IDBDatabase) => {
+    if (dev) {
+      const d = newDb ?? db ?? undefined;
+      if (d) {
+        const transaction = d.transaction('bookmarks', 'readonly');
+        const store = transaction.objectStore('bookmarks');
+        const request = store.getAll();
 
-      request.onsuccess = () => {
-        setBookmarks(request.result);
-      };
-      request.onerror = (event) => {
-        console.error('Failed to fetch bookmarks:', event.target.error);
-      };
+        request.onsuccess = () => {
+          setBookmarks(request.result);
+        };
+        request.onerror = (event) => {
+          console.error('Failed to fetch bookmarks:', event.target.error);
+        };
+      } else {
+        throw Error('neither deployment nor database env')
+      }
     } else {
       chrome.bookmarks.getTree((result: chrome.bookmarks.BookmarkTreeNode[]) => {
         const nodes = result.map(r => {
@@ -103,9 +108,9 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
       };
 
       request.onsuccess = (event) => {
-        setDb(event.target.result);
-        fetchBookmarks(); // Fetch bookmarks once the DB is successfully opened
-
+        const d: IDBDatabase = event.target.result;
+        setDb(d);
+        fetchBookmarks(d); // Fetch bookmarks once the DB is successfully opened
       };
 
       request.onerror = (event) => {
@@ -124,7 +129,10 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
         const store = transaction.objectStore('bookmarks');
         const request = store.add(args, args.url);
 
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => {
+          resolve(request.result);
+          fetchBookmarks();
+        }
         request.onerror = () => reject(request.error);
       });
     } else {
