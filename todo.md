@@ -4,6 +4,7 @@
 
 - [x] add tests https://vitest.dev/guide/
 
+- [x] alerts
 - [ ] change the path as the user clicks through IDs https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10
 
 - [ ] all locally, with a mock object loaded from a data file
@@ -16,7 +17,6 @@ https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
 `
 - [ ] delete a node
 - [ ] use optimistic updates
-- [ ] alerts
 - [ ] corner menu 
   - [ ] exports
 

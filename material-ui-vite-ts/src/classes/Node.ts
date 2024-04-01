@@ -1,3 +1,4 @@
+import { GridRowsProp } from "@mui/x-data-grid";
 import { MockBookmarkTreeNode } from "./mockdata";
 
 export default class Node {
@@ -37,3 +38,4 @@ export default class Node {
     return JSON.stringify(self);
   }
 }
+

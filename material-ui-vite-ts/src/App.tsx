@@ -7,6 +7,7 @@ import NestedModal from './features/settings/NestedModal';
 import AddNewModal from './features/add-new/AddNewModal';
 import { MainTable } from './MainTable';
 import RowContextMenu from './features/RowContextMenu';
+import { Bounce, ToastContainer } from 'react-toastify';
 
 function changePathWithoutReload(newPath: string): void {
   window.history.pushState({}, '', newPath);
@@ -32,6 +33,19 @@ export default function App() {
 
   return <Container maxWidth="xl">
     <BookmarksProvider>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <SearchAppBar />
@@ -51,10 +65,10 @@ export default function App() {
             Bookmarks data grid
           </Typography>
           <MainTable />
-          <RowContextMenu />
         </Grid>
         <Grid item xs={2}></Grid>
       </Grid>
+      <ToastContainer />
     </BookmarksProvider>
   </Container>
 }

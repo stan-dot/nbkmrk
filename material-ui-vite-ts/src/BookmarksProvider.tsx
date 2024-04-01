@@ -1,8 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import Node from './classes/Node';
 
 type BookmarksContextType = {
   addBookmark: (args: chrome.bookmarks.BookmarkCreateArg) => Promise<unknown>;
   deleteBookmark: (id: string) => Promise<unknown>;
+  fetchBookmarks: () => Promise<void>
+  bookmarks: Node[]
 }
 const dev: boolean = import.meta.env.DEV;
 // Define the context
@@ -13,6 +16,10 @@ const t: BookmarksContextType = {
   },
   deleteBookmark: function (id: string): Promise<unknown> {
     throw new Error('Function not implemented.');
+  },
+  bookmarks: [],
+  fetchBookmarks: () => {
+    throw Error('function not defined')
   }
 };
 
@@ -26,11 +33,11 @@ export const useBookmarksContext = () => useContext(BookmarksContext);
 export const BookmarksProvider = ({ children }: { children: React.ReactNode }) => {
   const [db, setDb] = useState<IDBDatabase | null>(null);
 
-  const [bookmarks, setBookmarks] = useState([]); // State to hold the list of bookmarks
+  const [bookmarks, setBookmarks] = useState<Node[]>([]); // State to hold the list of bookmarks
 
   // Function to fetch bookmarks
   const fetchBookmarks = async () => {
-    if (import.meta.env.DEV && db) {
+    if (dev && db) {
       const transaction = db.transaction('bookmarks', 'readonly');
       const store = transaction.objectStore('bookmarks');
       const request = store.getAll();
@@ -42,8 +49,12 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
         console.error('Failed to fetch bookmarks:', event.target.error);
       };
     } else {
-      chrome.bookmarks.getTree((result) => {
-        setBookmarks(result);
+      chrome.bookmarks.getTree((result: chrome.bookmarks.BookmarkTreeNode[]) => {
+        const nodes = result.map(r => {
+          const n = new Node(r);
+          return n
+        });
+        setBookmarks(nodes);
       });
     }
   };
@@ -127,7 +138,7 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
-  const value = { addBookmark, deleteBookmark, fetchBookmarks };
+  const value = { addBookmark, deleteBookmark, fetchBookmarks, bookmarks };
 
   return <BookmarksContext.Provider value={value}>{children}</BookmarksContext.Provider>;
 };
