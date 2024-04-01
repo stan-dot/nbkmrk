@@ -10,9 +10,9 @@ const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-
 const urlRegex = new RegExp(urlRegexString);
 
 const initialRows: MainTableRow[] = [
-  { id: 1, url: 'Hello', title: 'World' },
-  { id: 2, url: 'DataGridPro', title: 'is Awesome' },
-  { id: 3, url: 'MUI', title: 'is Amazing' },
+  { id: 1, url: 'https://mui.com/x/react-data-grid/components/#row', title: 'mui grid' },
+  { id: 2, url: 'https://en.wikipedia.org/wiki/Domesticated_silver_fox', title: 'domesticated fox' },
+  { id: 3, url: 'https://gun.eco/', title: 'gun.js' },
 ];
 
 
@@ -32,7 +32,8 @@ export function MainTable() {
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
-    setSelectedRow(Number(event.currentTarget.getAttribute('data-id')));
+    const n = Number(event.currentTarget.getAttribute('data-id'));
+    setSelectedRow(n);
     setContextMenu(
       contextMenu === null
         ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 }
@@ -78,8 +79,8 @@ export function MainTable() {
   useEffect(() => {
     const fetchData = async () => {
       await fetchBookmarks();
-      const finalRows = data.map(b => b.intoRow());
-      setNewBookmarks(finalRows);
+      // const finalRows = data.map(b => b.intoRow());
+      // setNewBookmarks(finalRows);
     }
   }, [])
 
@@ -88,7 +89,7 @@ export function MainTable() {
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
         columns={columns}
-        rows={finalRows}
+        rows={rows}
         slotProps={{
           row: {
             onContextMenu: handleContextMenu,
