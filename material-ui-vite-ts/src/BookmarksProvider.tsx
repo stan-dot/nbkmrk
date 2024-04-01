@@ -3,9 +3,10 @@ import Node from './classes/Node';
 
 type BookmarksContextType = {
   addBookmark: (args: chrome.bookmarks.BookmarkCreateArg) => Promise<unknown>;
-  deleteBookmark: (id: string) => Promise<unknown>;
+  deleteBookmark: (id: string, resolve: () => {}) => Promise<unknown>;
   fetchBookmarks: () => Promise<void>
   bookmarks: Node[]
+  searchBookmarks: (searchString: string, resolve: (a: any[]) => void) => void
 }
 const dev: boolean = import.meta.env.DEV;
 // Define the context
@@ -20,13 +21,13 @@ const t: BookmarksContextType = {
   bookmarks: [],
   fetchBookmarks: () => {
     throw Error('function not defined')
+  },
+  searchBookmarks: (searchString: string) => {
+    throw Error('not implemented for the default object')
   }
 };
 
 const BookmarksContext = createContext<BookmarksContextType>(t);
-
-
-// Custom hook to use the bookmarks context
 export const useBookmarksContext = () => useContext(BookmarksContext);
 
 // Provider component
@@ -59,6 +60,34 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
+  const searchBookmarks = async (searchString: string, resolve: (a: any[]) => void) => {
+    if (!db) {
+      throw Error('databse must be defined');
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const request: IDBRequest = store.openCursor(); // Open a cursor to iterate over all items
+      const searchResults: any[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          const { title, type, url } = cursor.value;
+          if (type === 'bookmark' && title.toLowerCase().includes(searchString.toLowerCase())) {
+            // If the item is a bookmark and the title matches the search string, add it to the results
+            searchResults.push(cursor.value);
+          }
+          cursor.continue(); // Move to the next object in the store
+        } else {
+          // No more entries, resolve the promise with the search results
+          resolve(searchResults);
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  };
   // Open IndexedDB connection in development
   useEffect(() => {
     if (!dev) return; // Skip if not in development mode
@@ -112,7 +141,7 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
-  const deleteBookmark = async (id: string) => {
+  const deleteBookmark = async (id: string, resolve: () => {}) => {
     if (import.meta.env.DEV && db) {
       // IndexedDB for development
       return new Promise((resolve, reject) => {
@@ -138,7 +167,7 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
-  const value = { addBookmark, deleteBookmark, fetchBookmarks, bookmarks };
+  const value = { addBookmark, deleteBookmark, fetchBookmarks, bookmarks, searchBookmarks };
 
   return <BookmarksContext.Provider value={value}>{children}</BookmarksContext.Provider>;
 };

@@ -4,10 +4,10 @@ import { Menu, MenuItem } from '@mui/material';
 import React, { useEffect } from 'react';
 import Node from './classes/Node';
 import { Bounce, toast } from 'react-toastify';
+import { MainTableRow } from './components/NodeComponent';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
-
 
 const initialRows: MainTableRow[] = [
   { id: 1, url: 'Hello', title: 'World' },
@@ -15,12 +15,6 @@ const initialRows: MainTableRow[] = [
   { id: 3, url: 'MUI', title: 'is Amazing' },
 ];
 
-
-type MainTableRow = {
-  id: number,
-  url: string,
-  title: string
-}
 
 const columns: GridColDef[] = [
   { field: 'url', headerName: 'Url', width: 150 },
@@ -78,13 +72,13 @@ export function MainTable() {
     // todo that is for optimistic updates
     handleClose();
   };
-  const { fetchBookmarks, deleteBookmark } = useBookmarksContext();
+  const { bookmarks, deleteBookmark } = useBookmarksContext();
 
   useEffect(() => {
-    
-  
+
+
   }, [])
-  
+
 
   return (
     <div style={{ height: 400, width: '100%' }}>

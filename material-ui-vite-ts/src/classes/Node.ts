@@ -1,6 +1,13 @@
 import { GridRowsProp } from "@mui/x-data-grid";
 import { MockBookmarkTreeNode } from "./mockdata";
 
+
+export type MainTableRow = {
+  id: number;
+  url: string;
+  title: string;
+};
+
 export default class Node {
   object: chrome.bookmarks.BookmarkTreeNode | MockBookmarkTreeNode
   domain: string | undefined;
@@ -34,8 +41,13 @@ export default class Node {
     return 0;
   }
 
-  public serialize(): string{
+  public serialize(): string {
     return JSON.stringify(self);
+  }
+
+  public intoRow(): MainTableRow {
+    // todo change this
+    return { id: parseInt(this.object.id), url: this.object.url ?? "", title: this.object.title }
   }
 }
 
