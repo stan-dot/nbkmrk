@@ -1,24 +1,14 @@
 import { Button, ButtonGroup, Container, Grid, Typography } from '@mui/material';
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import SearchAppBar from './features/search/SearchAppBar';
 import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
 import { useEffect, useState } from 'react';
 import { BookmarksProvider } from './BookmarksProvider';
 import NestedModal from './features/settings/NestedModal';
 import AddNewModal from './features/add-new/AddNewModal';
+import { MainTable } from './MainTable';
+import RowContextMenu from './features/RowContextMenu';
 
-const rows: GridRowsProp = [
-  { id: 1, col1: 'Hello', col2: 'World' },
-  { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-  { id: 3, col1: 'MUI', col2: 'is Amazing' },
-];
-
-const columns: GridColDef[] = [
-  { field: 'col1', headerName: 'Column 1', width: 150 },
-  { field: 'col2', headerName: 'Column 2', width: 150 },
-];
-
-function changePathWithoutReload(newPath: string) {
+function changePathWithoutReload(newPath: string): void {
   window.history.pushState({}, '', newPath);
 }
 
@@ -60,10 +50,12 @@ export default function App() {
           <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
             Bookmarks data grid
           </Typography>
-          <DataGrid rows={rows} columns={columns} />
+          <MainTable />
+          <RowContextMenu />
         </Grid>
         <Grid item xs={2}></Grid>
       </Grid>
     </BookmarksProvider>
   </Container>
 }
+

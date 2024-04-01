@@ -3,6 +3,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { useBookmarksContext } from '../../BookmarksProvider';
+import NodeComponent from '../../components/NodeComponent';
+import Node from '../../classes/Node';
+
+const n: chrome.bookmarks.BookmarkTreeNode = {
+  title: 'test old',
+  id: '5',
+  url: 'https://mui.com/x/react-data-grid/accessibility/#keyboard-navigation'
+}
+const testNode = new Node(n);
 
 export default function FileSystemNavigator() {
   return (
@@ -13,6 +23,7 @@ export default function FileSystemNavigator() {
         defaultExpandIcon={<ChevronRightIcon />}
       >
         <TreeItem nodeId="1" label="Applications">
+          <NodeComponent node={testNode} />
           <TreeItem nodeId="2" label="Calendar" />
         </TreeItem>
         <TreeItem nodeId="5" label="Documents">

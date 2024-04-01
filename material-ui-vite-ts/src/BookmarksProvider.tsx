@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type BookmarksContextType = { addBookmark: (args: chrome.bookmarks.BookmarkCreateArg) => Promise<unknown>; deleteBookmark: (id: string) => Promise<unknown>; }
+type BookmarksContextType = {
+  addBookmark: (args: chrome.bookmarks.BookmarkCreateArg) => Promise<unknown>;
+  deleteBookmark: (id: string) => Promise<unknown>;
+}
 const dev: boolean = import.meta.env.DEV;
 // Define the context
 
@@ -23,6 +26,28 @@ export const useBookmarksContext = () => useContext(BookmarksContext);
 export const BookmarksProvider = ({ children }: { children: React.ReactNode }) => {
   const [db, setDb] = useState<IDBDatabase | null>(null);
 
+  const [bookmarks, setBookmarks] = useState([]); // State to hold the list of bookmarks
+
+  // Function to fetch bookmarks
+  const fetchBookmarks = async () => {
+    if (import.meta.env.DEV && db) {
+      const transaction = db.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        setBookmarks(request.result);
+      };
+      request.onerror = (event) => {
+        console.error('Failed to fetch bookmarks:', event.target.error);
+      };
+    } else {
+      chrome.bookmarks.getTree((result) => {
+        setBookmarks(result);
+      });
+    }
+  };
+
   // Open IndexedDB connection in development
   useEffect(() => {
     if (!dev) return; // Skip if not in development mode
@@ -39,6 +64,8 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
 
       request.onsuccess = (event) => {
         setDb(event.target.result);
+        fetchBookmarks(); // Fetch bookmarks once the DB is successfully opened
+
       };
 
       request.onerror = (event) => {
@@ -100,7 +127,7 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     }
   };
 
-  const value = {  addBookmark, deleteBookmark };
+  const value = { addBookmark, deleteBookmark, fetchBookmarks };
 
   return <BookmarksContext.Provider value={value}>{children}</BookmarksContext.Provider>;
 };
