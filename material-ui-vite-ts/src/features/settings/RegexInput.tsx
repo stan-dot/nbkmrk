@@ -4,13 +4,13 @@ function RegexInput() {
   const [regexInput, setRegexInput] = useState<string>('');
   const [isValidRegex, setIsValidRegex] = useState<boolean>(true);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setRegexInput(value);
     validateRegex(value);
   };
 
-  const validateRegex = (input) => {
+  const validateRegex = (input: string) => {
     try {
       new RegExp(input);
       setIsValidRegex(true);

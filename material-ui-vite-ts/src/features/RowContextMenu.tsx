@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useState } from 'react';
 
 const columns = [
   {
@@ -35,17 +35,18 @@ const initialRows = [
 ];
 
 export default function RowContextMenu() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [selectedRow, setSelectedRow] = React.useState<number>();
+  const [rows, setRows] = useState(initialRows);
+  const [selectedRow, setSelectedRow] = useState<number>();
 
-  const [contextMenu, setContextMenu] = React.useState<{
+  const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
 
-  const handleContextMenu = (event: React.MouseEvent) => {
+  const handleContextMenu = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    setSelectedRow(Number(event.currentTarget.getAttribute('data-id')));
+    const t = event.currentTarget as HTMLElement;
+    setSelectedRow(Number(t.getAttribute('data-id')));
     setContextMenu(
       contextMenu === null
         ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 }

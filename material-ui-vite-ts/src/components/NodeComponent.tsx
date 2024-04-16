@@ -8,7 +8,7 @@ import { useBookmarksContext } from '../BookmarksProvider'
 import DeleteDialog from './DeleteDialog'
 
 function NodeComponent({ node }: { node: Node }) {
-  const { addBookmark, deleteBookmark } = useBookmarksContext();
+  const {  deleteBookmark } = useBookmarksContext();
   return (
     <div onDoubleClick={() => {
       window.alert('here change the path')
@@ -16,7 +16,7 @@ function NodeComponent({ node }: { node: Node }) {
       <Box>{node.object.title}</Box>
       <ContextMenu />
       <DraggableDialog />
-      <DeleteDialog callback={() => deleteBookmark(node.object.id)} />
+      <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
     </div>
   )
 }

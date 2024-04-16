@@ -15,7 +15,6 @@ function changePathWithoutReload(newPath: string): void {
 
 export default function App() {
 
-
   const [params, setParams] = useState<URLSearchParams>(new URLSearchParams(window.location.search))
   const [readPath, setReadPath] = useState<string>("")
 
@@ -61,10 +60,23 @@ export default function App() {
           <FileSystemNavigator />
         </Grid>
         <Grid item xs={8}>
-          <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-            Bookmarks data grid
-          </Typography>
-          <MainTable />
+          {params === undefined ?
+
+            <>
+              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                Bookmarks data grid
+              </Typography>
+              <MainTable />
+            </>
+            :
+            <>
+              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                Bookmarks search grid
+              </Typography>
+              <MainTable />
+            </>
+
+          }
         </Grid>
         <Grid item xs={2}></Grid>
       </Grid>

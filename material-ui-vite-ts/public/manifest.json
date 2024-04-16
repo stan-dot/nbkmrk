@@ -2,6 +2,7 @@
   "name": "New BKMRK",
   "description": "A New bookmark manager",
   "version": "0.1.0",
+  "options_page": "index.html",
   "manifest_version": 3,
   "incognito": "split",
   "permissions": [

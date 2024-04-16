@@ -2,9 +2,8 @@ import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { useBookmarksContext } from './BookmarksProvider';
 import { Menu, MenuItem } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import Node from './classes/Node';
+import Node, { MainTableRow } from './classes/Node';
 import { Bounce, toast } from 'react-toastify';
-import { MainTableRow } from './components/NodeComponent';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
