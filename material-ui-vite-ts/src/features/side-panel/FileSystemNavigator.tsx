@@ -1,37 +1,24 @@
-import Box from '@mui/material/Box';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { useBookmarksContext } from '../../BookmarksProvider';
 import NodeComponent from '../../components/NodeComponent';
-import Node from '../../classes/Node';
-
-const n: chrome.bookmarks.BookmarkTreeNode = {
-  title: 'test old',
-  id: '5',
-  url: 'https://mui.com/x/react-data-grid/accessibility/#keyboard-navigation'
-}
-const testNode = new Node(n);
+import { useRouteContext } from '../../ParamsProvider';
+import { Typography } from '@mui/material';
 
 export default function FileSystemNavigator() {
+  const { bookmarks } = useBookmarksContext();
+  const { readPath } = useRouteContext();
   return (
     <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
+      <Typography>{readPath}</Typography>
       <TreeView
         aria-label="file system navigator"
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        <TreeItem nodeId="1" label="Applications">
-          <NodeComponent node={testNode} />
-          <TreeItem nodeId="2" label="Calendar" />
-        </TreeItem>
-        <TreeItem nodeId="5" label="Documents">
-          <TreeItem nodeId="10" label="OSS" />
-          <TreeItem nodeId="6" label="MUI">
-            <TreeItem nodeId="8" label="index.js" />
-          </TreeItem>
-        </TreeItem>
+        {bookmarks.map((b, i) => <NodeComponent node={b} />)}
       </TreeView>
     </Box>
   );

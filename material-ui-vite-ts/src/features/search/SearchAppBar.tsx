@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import PositionedMenu from '../corner-menu/PositionedMenu';
 import { useState } from 'react';
+import { useRouteContext } from '../../ParamsProvider';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -53,9 +54,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+function addToSearch(newPath: string) {
+  window.history.pushState({}, '', `search?q=${newPath}`);
+}
+
 export default function SearchAppBar() {
 
+  const {  setParams } = useRouteContext();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const changeHandler = (v: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const value = v.target.value;
+    setSearchTerm(value);
+    addToSearch(value)
+    const p = new URLSearchParams(value);
+    setParams(p)
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -65,6 +79,10 @@ export default function SearchAppBar() {
             noWrap
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            onClick={() => {
+              const p = new URLSearchParams()
+              setParams(p)
+            }}
           >
             NBKMRK
           </Typography>
@@ -76,7 +94,7 @@ export default function SearchAppBar() {
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
               value={searchTerm}
-              onChange={v => { setSearchTerm(v.target.value) }}
+              onChange={changeHandler}
             />
           </Search>
           <IconButton

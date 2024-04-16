@@ -8,6 +8,7 @@ import AddNewModal from './features/add-new/AddNewModal';
 import { MainTable } from './MainTable';
 import RowContextMenu from './features/RowContextMenu';
 import { Bounce, ToastContainer } from 'react-toastify';
+import { RouteProvider } from './ParamsProvider';
 
 function changePathWithoutReload(newPath: string): void {
   window.history.pushState({}, '', newPath);
@@ -32,56 +33,59 @@ export default function App() {
 
   return <Container maxWidth="xl">
     <BookmarksProvider>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <SearchAppBar />
-          <div id="pathBar">
-            {readPath}
-          </div>
-          <ButtonGroup>
-            <NestedModal />
-            <AddNewModal parentId={'test'} />
-          </ButtonGroup>
-        </Grid>
-        <Grid item xs={2}>
-          <FileSystemNavigator />
-        </Grid>
-        <Grid item xs={8}>
-          {params === undefined ?
+      <RouteProvider>
 
-            <>
-              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-                Bookmarks data grid
-              </Typography>
-              <MainTable />
-            </>
-            :
-            <>
-              <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-                Bookmarks search grid
-              </Typography>
-              <MainTable />
-            </>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <SearchAppBar />
+            <div id="pathBar">
+              {readPath}
+            </div>
+            <ButtonGroup>
+              <NestedModal />
+              <AddNewModal parentId={'test'} />
+            </ButtonGroup>
+          </Grid>
+          <Grid item xs={2}>
+            <FileSystemNavigator />
+          </Grid>
+          <Grid item xs={8}>
+            {params.size === 0 ?
 
-          }
+              <>
+                <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                  Bookmarks data grid
+                </Typography>
+                <MainTable />
+              </>
+              :
+              <>
+                <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+                  Bookmarks search grid
+                </Typography>
+                <MainTable />
+              </>
+
+            }
+          </Grid>
+          <Grid item xs={2}></Grid>
         </Grid>
-        <Grid item xs={2}></Grid>
-      </Grid>
-      <ToastContainer />
+        <ToastContainer />
+      </RouteProvider>
     </BookmarksProvider>
-  </Container>
+  </Container >
 }
 

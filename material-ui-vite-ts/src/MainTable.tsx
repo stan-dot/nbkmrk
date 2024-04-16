@@ -8,12 +8,6 @@ import { Bounce, toast } from 'react-toastify';
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
 
-const initialRows: MainTableRow[] = [
-  { id: 1, url: 'https://mui.com/x/react-data-grid/components/#row', title: 'mui grid' },
-  { id: 2, url: 'https://en.wikipedia.org/wiki/Domesticated_silver_fox', title: 'domesticated fox' },
-  { id: 3, url: 'https://gun.eco/', title: 'gun.js' },
-];
-
 
 const columns: GridColDef[] = [
   { field: 'url', headerName: 'Url', width: 150 },
@@ -21,7 +15,8 @@ const columns: GridColDef[] = [
 ];
 
 export function MainTable() {
-  const [rows, setRows] = React.useState<MainTableRow[]>(initialRows);
+  const { bookmarks, fetchBookmarks } = useBookmarksContext();
+  const [rows, setRows] = React.useState<MainTableRow[]>(bookmarks.map(b => b.intoRow()));
   const [selectedRow, setSelectedRow] = React.useState<number>();
 
   const [contextMenu, setContextMenu] = React.useState<{
@@ -72,7 +67,6 @@ export function MainTable() {
     // todo that is for optimistic updates
     handleClose();
   };
-  const { bookmarks, fetchBookmarks } = useBookmarksContext();
 
   const [newBookmarks, setNewBookmarks] = useState<MainTableRow[]>([])
   useEffect(() => {

@@ -49,5 +49,9 @@ export default class Node {
     // todo change this
     return { id: parseInt(this.object.id), url: this.object.url ?? "", title: this.object.title }
   }
+
+  public async getChildren(): Promise<chrome.bookmarks.BookmarkTreeNode[]> {
+    return await chrome.bookmarks.getChildren(this.object.id);
+  }
 }
 
