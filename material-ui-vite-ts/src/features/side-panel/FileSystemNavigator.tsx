@@ -11,7 +11,7 @@ export default function FileSystemNavigator() {
   const [{ bookmarkTree, path }, dispatch] = useAppStateContext();
   return (
     <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
-      <Typography>{path}</Typography>
+      {/* <Typography>{path}</Typography> */}
       <TreeView
         aria-label="file system navigator"
         defaultCollapseIcon={<ExpandMoreIcon />}

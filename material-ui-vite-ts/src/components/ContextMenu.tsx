@@ -1,10 +1,14 @@
-import * as React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { useState } from 'react';
 
-export default function ContextMenu() {
-  const [contextMenu, setContextMenu] = React.useState<{
+type ContextMenuProps = {
+  children: React.ReactNode
+}
+
+export default function ContextMenu({ children }: ContextMenuProps) {
+  const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
@@ -30,9 +34,7 @@ export default function ContextMenu() {
 
   return (
     <div onContextMenu={handleContextMenu} style={{ cursor: 'context-menu' }}>
-      <Typography>
-        some text
-      </Typography>
+      {children}
       <Menu
         open={contextMenu !== null}
         onClose={handleClose}

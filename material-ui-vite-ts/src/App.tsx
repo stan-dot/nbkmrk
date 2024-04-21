@@ -36,9 +36,7 @@ export default function App() {
             <FileSystemNavigator />
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-              data
-            </Typography>
+            {/* <Typography variant="h4" component="h1" sx={{ mb: 2 }}> </Typography> */}
             <MainTable />
           </Grid>
           <Grid item xs={2}></Grid>

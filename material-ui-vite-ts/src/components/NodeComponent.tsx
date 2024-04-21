@@ -22,28 +22,28 @@ function NodeComponent({ node }: { node: Node }) {
   }, [loadingChildren])
 
   return (
-    <TreeItem nodeId={node.object.id} label={node.object.title}
-      onDoubleClick={() => {
-        const t = node.object.title
-        if (path.includes(t)) {
-          window.alert('here change the path')
-          dispatch({ type: "SET_PATH", payload: t })
-        }
-      }}
-      onMouseOver={() => {
-        setLoadingChildren(true);
-      }}
-    >
-      <Box>{node.object.title}</Box>
-      <ContextMenu />
-      <DraggableDialog />
-      <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
-      {children.length !== 0 && <>
-        {children.map((c, i) => {
-          const n = new Node(c);
-          return <NodeComponent node={n} />
-        })}</>}
-    </TreeItem >
+    <ContextMenu>
+      <TreeItem nodeId={node.object.id} label={node.object.title}
+        onDoubleClick={() => {
+          const t = node.object.title
+          if (path.includes(t)) {
+            dispatch({ type: "SET_PATH", payload: t })
+          }
+        }}
+        onMouseOver={() => {
+          setLoadingChildren(true);
+        }}
+      >
+        <Box>{node.object.title}</Box>
+        <DraggableDialog />
+        <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
+        {children.length !== 0 && <>
+          {children.map((c, i) => {
+            const n = new Node(c);
+            return <NodeComponent node={n} />
+          })}</>}
+      </TreeItem >
+    </ContextMenu >
   )
 }
 
