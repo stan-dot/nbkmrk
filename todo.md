@@ -26,6 +26,7 @@ https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
   - [ ] copy bookmark to Uri - just using json
 
 ## more features
+
 - [ ] remove empty children
 - [ ] filter
 - [ ] path

@@ -1,22 +1,26 @@
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
-import { useBookmarksContext } from './BookmarksProvider';
 import { Menu, MenuItem } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import Node, { MainTableRow } from './classes/Node';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React from 'react';
 import { Bounce, toast } from 'react-toastify';
+import { useAppStateContext } from './StateProvider';
+import Node, { MainTableRow } from './classes/Node';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
-
 
 const columns: GridColDef[] = [
   { field: 'url', headerName: 'Url', width: 150 },
   { field: 'title', headerName: 'Title', width: 150 },
 ];
 
-export function MainTable() {
-  const { bookmarks, fetchBookmarks } = useBookmarksContext();
-  const [rows, setRows] = React.useState<MainTableRow[]>(bookmarks.map(b => b.intoRow()));
+type MainTableProps = {
+}
+
+export function MainTable({ }: MainTableProps) {
+  const [{ bookmarksDisplay }, dispatch] = useAppStateContext();
+
+  console.log('loading bookmarks: ', bookmarksDisplay);
+  const [rows, setRows] = React.useState<MainTableRow[]>(bookmarksDisplay.map(b => b.intoRow()));
   const [selectedRow, setSelectedRow] = React.useState<number>();
 
   const [contextMenu, setContextMenu] = React.useState<{
@@ -67,16 +71,6 @@ export function MainTable() {
     // todo that is for optimistic updates
     handleClose();
   };
-
-  const [newBookmarks, setNewBookmarks] = useState<MainTableRow[]>([])
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchBookmarks();
-      // const finalRows = data.map(b => b.intoRow());
-      // setNewBookmarks(finalRows);
-    }
-  }, [])
-
 
   return (
     <div style={{ height: 400, width: '100%' }}>

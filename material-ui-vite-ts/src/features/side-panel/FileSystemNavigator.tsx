@@ -4,21 +4,20 @@ import Box from '@mui/material/Box';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { useBookmarksContext } from '../../BookmarksProvider';
 import NodeComponent from '../../components/NodeComponent';
-import { useRouteContext } from '../../ParamsProvider';
 import { Typography } from '@mui/material';
+import { useAppStateContext } from '../../StateProvider';
 
 export default function FileSystemNavigator() {
-  const { bookmarks } = useBookmarksContext();
-  const { readPath } = useRouteContext();
+  const [{ bookmarkTree, path }, dispatch] = useAppStateContext();
   return (
     <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
-      <Typography>{readPath}</Typography>
+      <Typography>{path}</Typography>
       <TreeView
         aria-label="file system navigator"
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {bookmarks.map((b, i) => <NodeComponent node={b} />)}
+        {bookmarkTree.map((b, i) => <NodeComponent node={b} />)}
       </TreeView>
     </Box>
   );

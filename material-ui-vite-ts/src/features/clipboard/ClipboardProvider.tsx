@@ -10,7 +10,6 @@ const t: ClipboardContextType = {};
 
 const ClipboardContext = createContext<ClipboardContextType>(t);
 
-
 // Custom hook to use the bookmarks context
 export const useClipboardContext = () => useContext(ClipboardContext);
 

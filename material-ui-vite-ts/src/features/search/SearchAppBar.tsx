@@ -60,7 +60,7 @@ function addToSearch(newPath: string) {
 
 export default function SearchAppBar() {
 
-  const {  setParams } = useRouteContext();
+  const { readPath, setParams } = useRouteContext();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const changeHandler = (v: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const value = v.target.value;
@@ -106,6 +106,7 @@ export default function SearchAppBar() {
           >
             <PositionedMenu />
           </IconButton>
+          <p>{readPath}</p>
         </Toolbar>
       </AppBar>
     </Box>
