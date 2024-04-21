@@ -4,7 +4,6 @@ import Node from './classes/Node';
 type BookmarksContextType = {
   addBookmark: (args: chrome.bookmarks.BookmarkCreateArg) => Promise<unknown>;
   deleteBookmark: (id: string, resolve: () => void) => Promise<unknown>;
-  fetchBookmarks: () => Promise<void>
   bookmarks: Node[]
   searchBookmarks: (searchString: string, resolve: (a: any[]) => void) => void
 }
@@ -19,9 +18,6 @@ const t: BookmarksContextType = {
     throw new Error('Function not implemented.');
   },
   bookmarks: [],
-  fetchBookmarks: () => {
-    throw Error('function not defined')
-  },
   searchBookmarks: (searchString: string) => {
     throw Error('not implemented for the default object')
   }
@@ -34,17 +30,6 @@ export const useBookmarksContext = () => useContext(BookmarksContext);
 export const BookmarksProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [bookmarks, setBookmarks] = useState<Node[]>([]); // State to hold the list of bookmarks
-
-  // Function to fetch bookmarks
-  const fetchBookmarks = async (newDb?: IDBDatabase) => {
-    chrome.bookmarks.getTree((result: chrome.bookmarks.BookmarkTreeNode[]) => {
-      const nodes = result.map(r => {
-        const n = new Node(r);
-        return n
-      });
-      setBookmarks(nodes);
-    });
-  };
 
   const searchBookmarks = async (searchString: string, resolve: (a: any[]) => void) => {
     const r = await chrome.bookmarks.search(searchString);
@@ -76,7 +61,7 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
     });
   };
 
-  const value = { addBookmark, deleteBookmark, fetchBookmarks, bookmarks, searchBookmarks };
+  const value = { addBookmark, deleteBookmark, bookmarks, searchBookmarks };
 
   return <BookmarksContext.Provider value={value}>{children}</BookmarksContext.Provider>;
 };

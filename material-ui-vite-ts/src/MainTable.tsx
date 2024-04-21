@@ -19,7 +19,6 @@ type MainTableProps = {
 export function MainTable({ }: MainTableProps) {
   const [{ bookmarksDisplay }, dispatch] = useAppStateContext();
 
-  console.log('loading bookmarks: ', bookmarksDisplay);
   const [rows, setRows] = React.useState<MainTableRow[]>(bookmarksDisplay.map(b => b.intoRow()));
   const [selectedRow, setSelectedRow] = React.useState<number>();
 

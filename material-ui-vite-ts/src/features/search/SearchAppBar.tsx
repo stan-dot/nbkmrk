@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import PositionedMenu from '../corner-menu/PositionedMenu';
 import { useState } from 'react';
-import { useRouteContext } from '../../ParamsProvider';
+import { useAppStateContext } from '../../StateProvider';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -59,15 +59,16 @@ function addToSearch(newPath: string) {
 }
 
 export default function SearchAppBar() {
+  const [{ searchParams }, dispatch] = useAppStateContext();
 
-  const { readPath, setParams } = useRouteContext();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const changeHandler = (v: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const value = v.target.value;
     setSearchTerm(value);
+    // todo that is optimistic udpates, right?
     addToSearch(value)
     const p = new URLSearchParams(value);
-    setParams(p)
+    dispatch({ type: 'SET_SEARCH_PARAMS', payload: p })
   };
 
   return (
@@ -81,7 +82,8 @@ export default function SearchAppBar() {
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
             onClick={() => {
               const p = new URLSearchParams()
-              setParams(p)
+              setSearchTerm('');
+              dispatch({ type: 'SET_SEARCH_PARAMS', payload: p })
             }}
           >
             NBKMRK
@@ -106,7 +108,6 @@ export default function SearchAppBar() {
           >
             <PositionedMenu />
           </IconButton>
-          <p>{readPath}</p>
         </Toolbar>
       </AppBar>
     </Box>

@@ -1,5 +1,6 @@
 import { GridRowsProp } from "@mui/x-data-grid";
 import { MockBookmarkTreeNode } from "./mockdata";
+import { idID } from "@mui/material/locale";
 
 
 export type MainTableRow = {
@@ -15,12 +16,19 @@ export default class Node {
 
   constructor(item: chrome.bookmarks.BookmarkTreeNode) {
     const o: MockBookmarkTreeNode = {
-      title: "",
-      id: ""
+      title: item.title,
+      id: item.id
     };
     this.object = o;
-    this.domain = item.url?.substring(0, 4); // todo correct this
-    this.isFolder = !!!(item.url)
+    if (item.url) {
+
+      const urlObj = new URL(item.url);
+      this.domain = urlObj.hostname;
+      this.isFolder = false;
+    } else {
+      this.domain = undefined;
+      this.isFolder = true;
+    }
 
   }
 

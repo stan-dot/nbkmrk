@@ -7,11 +7,11 @@ import DeleteDialog from './DeleteDialog'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import { useEffect, useState } from 'react'
 import { MockBookmarkTreeNode } from '../classes/mockdata'
-import { useRouteContext } from '../ParamsProvider'
+import { useAppStateContext } from '../StateProvider'
 
 function NodeComponent({ node }: { node: Node }) {
+  const [{ path }, dispatch] = useAppStateContext();
   const { deleteBookmark } = useBookmarksContext();
-  const { readPath, setReadPath } = useRouteContext();
   const [loadingChildren, setLoadingChildren] = useState(false);
   const [children, setChildren] = useState<MockBookmarkTreeNode[]>([])
 
@@ -25,9 +25,9 @@ function NodeComponent({ node }: { node: Node }) {
     <TreeItem nodeId={node.object.id} label={node.object.title}
       onDoubleClick={() => {
         const t = node.object.title
-        if (readPath.includes(t)) {
+        if (path.includes(t)) {
           window.alert('here change the path')
-          setReadPath(t)
+          dispatch({ type: "SET_PATH", payload: t })
         }
       }}
       onMouseOver={() => {

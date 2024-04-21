@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useReducer } from 'react'
+import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import Node from './classes/Node';
 
 interface AppState {
-  path: string;
+  path: string; // TODO will be Node array in the end
   bookmarkTree: Node[];
   bookmarksDisplay: Node[];
   searchParams: URLSearchParams;
@@ -10,6 +10,7 @@ interface AppState {
 
 type AppAction =
   | { type: 'SET_PATH'; payload: string }
+  | { type: "REFRESH_LIST"; payload: null }
   | { type: 'SET_BOOKMARK_TREE'; payload: Node[] }
   | { type: 'SET_BOOKMARKS_DISPLAY'; payload: Node[] }
   | { type: 'SET_SEARCH_PARAMS'; payload: URLSearchParams };
@@ -21,6 +22,18 @@ const initialState: AppState = {
   searchParams: new URLSearchParams(window.location.search),
 };
 
+
+// Function to fetch bookmarks
+async function fetchBookmarks(dispatch: React.Dispatch<AppAction>): Promise<void> {
+  console.log('fetching new bookmarks');
+  chrome.bookmarks.getTree((result: chrome.bookmarks.BookmarkTreeNode[]) => {
+    console.log('got a result', result);
+    const nodes = result[0]!.children!.map(r => new Node(r));
+    dispatch({ type: 'SET_BOOKMARKS_DISPLAY', payload: nodes })
+    dispatch({ type: "SET_BOOKMARK_TREE", payload: nodes })
+  });
+};
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_PATH':
@@ -29,6 +42,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_BOOKMARK_TREE':
       return { ...state, bookmarkTree: action.payload };
     case 'SET_BOOKMARKS_DISPLAY':
+      // todo update this in sync with path change. maybe never set path change on its own
       return { ...state, bookmarksDisplay: action.payload };
     case 'SET_SEARCH_PARAMS':
       window.history.pushState({}, '', `?${action.payload.toString()}`);
@@ -45,6 +59,13 @@ interface AppStateProviderProps {
 
 export const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  console.log('iniital or later state: ', state)
+
+  useEffect(() => {
+    console.log('starts loading bookmarks')
+    fetchBookmarks(dispatch);
+  }, [])
+
 
   return (
     <AppStateContext.Provider value={[state, dispatch]}>
