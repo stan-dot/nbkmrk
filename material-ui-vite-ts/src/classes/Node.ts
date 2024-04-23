@@ -33,7 +33,9 @@ export default class Node {
   }
 
   public open(): void {
-    this.object && window.open(this.object.url)
+    if (this.object && this.object.url) {
+      window.open(this.object.url)
+    }
   }
 
   public openPrivate(): void {

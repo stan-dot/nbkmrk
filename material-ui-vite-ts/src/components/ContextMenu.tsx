@@ -2,16 +2,22 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
+import Node from '../classes/Node';
+import DeleteDialog from './DeleteDialog';
+import DraggableDialog from './DraggableDialog';
+import { useBookmarksContext } from '../BookmarksProvider';
 
 type ContextMenuProps = {
   children: React.ReactNode
+  node: Node
 }
 
-export default function ContextMenu({ children }: ContextMenuProps) {
+export default function ContextMenu({ children, node }: ContextMenuProps) {
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
+  const { deleteBookmark } = useBookmarksContext();
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -29,7 +35,9 @@ export default function ContextMenu({ children }: ContextMenuProps) {
   };
 
   const handleClose = () => {
-    setContextMenu(null);
+    setTimeout(() => {
+      setContextMenu(null);
+    }, 3000);
   };
 
   return (
@@ -45,10 +53,28 @@ export default function ContextMenu({ children }: ContextMenuProps) {
             : undefined
         }
       >
-        <MenuItem onClick={handleClose}>Copy</MenuItem>
-        <MenuItem onClick={handleClose}>Print</MenuItem>
-        <MenuItem onClick={handleClose}>Highlight</MenuItem>
-        <MenuItem onClick={handleClose}>Email</MenuItem>
+        <MenuItem onClick={handleClose}>
+          <DraggableDialog />
+
+        </MenuItem>
+        <MenuItem onClick={() => {
+          node.open();
+          handleClose()
+        }}>
+          Open
+        </MenuItem>
+
+        <MenuItem onClick={() => {
+          node.openPrivate();
+          handleClose()
+        }}>
+          Open incognito
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
+
+        </MenuItem>
+
       </Menu>
     </div>
   );

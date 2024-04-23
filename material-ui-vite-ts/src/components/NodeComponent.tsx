@@ -11,7 +11,6 @@ import { useAppStateContext } from '../StateProvider'
 
 function NodeComponent({ node }: { node: Node }) {
   const [{ path }, dispatch] = useAppStateContext();
-  const { deleteBookmark } = useBookmarksContext();
   const [loadingChildren, setLoadingChildren] = useState(false);
   const [children, setChildren] = useState<MockBookmarkTreeNode[]>([])
 
@@ -22,7 +21,7 @@ function NodeComponent({ node }: { node: Node }) {
   }, [loadingChildren])
 
   return (
-    <ContextMenu>
+    <ContextMenu node={node}>
       <TreeItem nodeId={node.object.id} label={node.object.title}
         onDoubleClick={() => {
           const t = node.object.title
@@ -34,9 +33,6 @@ function NodeComponent({ node }: { node: Node }) {
           setLoadingChildren(true);
         }}
       >
-        <Box>{node.object.title}</Box>
-        <DraggableDialog />
-        <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
         {children.length !== 0 && <>
           {children.map((c, i) => {
             const n = new Node(c);
