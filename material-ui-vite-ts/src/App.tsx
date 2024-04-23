@@ -6,6 +6,8 @@ import { AppStateProvider } from './StateProvider';
 import AddNewModal from './features/add-new/AddNewModal';
 import SearchAppBar from './features/search/SearchAppBar';
 import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function App() {
 

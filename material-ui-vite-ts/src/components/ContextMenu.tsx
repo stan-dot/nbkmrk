@@ -1,7 +1,7 @@
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Node from '../classes/Node';
 import DeleteDialog from './DeleteDialog';
 import DraggableDialog from './DraggableDialog';
@@ -40,6 +40,14 @@ export default function ContextMenu({ children, node }: ContextMenuProps) {
     }, 3000);
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setContextMenu(null)
+    }, 4000);
+
+  }, [])
+
+
   return (
     <div onContextMenu={handleContextMenu} style={{ cursor: 'context-menu' }}>
       {children}
@@ -57,22 +65,35 @@ export default function ContextMenu({ children, node }: ContextMenuProps) {
           <DraggableDialog />
 
         </MenuItem>
-        <MenuItem onClick={() => {
-          node.open();
+        <MenuItem onClick={async () => {
+          if (node.isFolder) {
+            const c = await node.getChildren();
+            // todo unsure if should use recursive all levels. native bookmarks use one level
+            c.forEach(b => window.open(b.url))
+          } else {
+            node.open();
+          }
           handleClose()
-        }}>
+        }}
+        >
           Open
         </MenuItem>
 
-        <MenuItem onClick={() => {
-          node.openPrivate();
+        <MenuItem onClick={async () => {
+          if (node.isFolder) {
+            const c = await node.getChildren();
+            // todo unsure if should use recursive all levels. native bookmarks use one level
+            c.forEach(b => chrome.windows.create({ url: b.url }))
+          } else {
+            node.openPrivate();
+          }
           handleClose()
-        }}>
+        }}
+        >
           Open incognito
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
-
         </MenuItem>
 
       </Menu>

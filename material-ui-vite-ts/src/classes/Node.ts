@@ -34,11 +34,15 @@ export default class Node {
 
   public open(): void {
     if (this.object && this.object.url) {
-      window.open(this.object.url)
+      // window.open(this.object.url)
+      chrome.tabs.create({ url: this.object.url })
     }
   }
 
   public openPrivate(): void {
+    if (this.object && this.object.url) {
+      chrome.windows.create({ url: this.object.url, incognito: false })
+    }
     // this.object && chrome.tabs.create({ url: this.object.url, incognito: true })
   }
 

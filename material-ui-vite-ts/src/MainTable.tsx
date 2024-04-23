@@ -3,24 +3,23 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import React from 'react';
 import { Bounce, toast } from 'react-toastify';
 import { useAppStateContext } from './StateProvider';
-import Node, { MainTableRow } from './classes/Node';
+import Node from './classes/Node';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
 
-const columns: GridColDef[] = [
-  { field: 'url', headerName: 'Url', width: 150 },
-  { field: 'title', headerName: 'Title', width: 150 },
+const columns: GridColDef<Node>[] = [
+  { field: 'url', headerName: 'Url', width: 150, valueGetter: (params) => params.row.object.url ?? 'folder' },
+  { field: 'title', headerName: 'Title', width: 150, valueGetter: (params) => params.row.object.title },
 ];
 
 type MainTableProps = {
 }
 
 export function MainTable({ }: MainTableProps) {
-  const [{ bookmarksDisplay }] = useAppStateContext();
+  const [{ bookmarksDisplay }, dispatch] = useAppStateContext();
 
-  const [rows, setRows] = React.useState<MainTableRow[]>(bookmarksDisplay.map(b => b.intoRow()));
-  const [selectedRow, setSelectedRow] = React.useState<number>();
+  const [selectedRow, setSelectedRow] = React.useState<number>(0);
 
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
@@ -42,40 +41,17 @@ export function MainTable({ }: MainTableProps) {
     setContextMenu(null);
   };
 
-  const convertToUppercase = () => {
-    const newRows = rows.map((row) => {
-      if (row.id === selectedRow) {
-        return {
-          ...row,
-          title: row.title.toUpperCase(),
-        };
-      }
-      return row as MainTableRow;
-    });
-    setRows(newRows);
-    handleClose();
-  };
-
-  const convertToLowercase = () => {
-    const newRows = (rows).map((row) => {
-      if (row.id === selectedRow) {
-        return {
-          ...row,
-          title: row.title.toLowerCase(),
-        };
-      }
-      return row;
-    });
-    setRows(newRows);
-    // todo that is for optimistic updates
-    handleClose();
-  };
-
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
         columns={columns}
-        rows={rows}
+        rows={bookmarksDisplay}
+
+        getRowId={(row: Node) => row.object.id}
+        onRowDoubleClick={(params) => {
+          const node: Node = params.row;
+          window.alert(`should change path, includign: ${node.object.title}`)
+        }}
         slotProps={{
           row: {
             onContextMenu: handleContextMenu,
@@ -101,13 +77,11 @@ export function MainTable({ }: MainTableProps) {
           },
         }}
       >
-        <MenuItem onClick={convertToUppercase}>UPPERCASE</MenuItem>
-        <MenuItem onClick={convertToLowercase}>lowercase</MenuItem>
         <MenuItem onClick={() => {
-          const ro = rows.find(r => r.id === selectedRow);
+          const ro = bookmarksDisplay.at(selectedRow!);
           if (ro) {
-            if (ro.url.match(urlRegex)) {
-              const t: chrome.bookmarks.BookmarkTreeNode = { id: '1', title: ro.title, url: ro.url };
+            if (ro.object && ro.object.url && ro.object.url.match(urlRegex)) {
+              const t: chrome.bookmarks.BookmarkTreeNode = { id: '1', title: ro.object.title, url: ro.object.url };
               const n = new Node(t)
               n.open()
             } else {
