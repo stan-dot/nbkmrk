@@ -16,7 +16,7 @@ here for reading the local bookmarks page
 https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
 `
 
-- [ ] update path on click - just get the path from all that before and read it in - ask chat for the best data structure
+- [ ] update path on click - just get the path from all that before and read it in - ask chat for the best data structure - nah, just hard code it. if speed is a factor, then catch it from the users
 
 - [ ] delete a node
 - [ ] use optimistic updates
