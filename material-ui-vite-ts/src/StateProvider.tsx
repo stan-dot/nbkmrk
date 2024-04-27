@@ -16,7 +16,9 @@ type AppAction =
   | { type: "REFRESH_LIST"; payload: null }
   | { type: 'SET_BOOKMARK_TREE'; payload: Node[] }
   | { type: 'SET_BOOKMARKS_DISPLAY'; payload: Node[] }
+  | { type: 'RESET_SEARCH'; payload: undefined }
   | { type: 'SET_SEARCH_PARAMS'; payload: URLSearchParams };
+
 
 const initialState: AppState = {
   // pathLastName: window.location.pathname,
@@ -73,6 +75,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_BOOKMARKS_DISPLAY':
       // todo update this in sync with path change. maybe never let path change on its own
       return { ...state, bookmarksDisplay: action.payload };
+    case 'REFRESH_LIST':
+      return { ...state, searchParams: new URLSearchParams() }
     case 'SET_SEARCH_PARAMS':
       window.history.pushState({}, '', `?${action.payload.toString()}`);
       return { ...state, searchParams: action.payload };

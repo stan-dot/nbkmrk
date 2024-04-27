@@ -4,6 +4,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import DraggableDialog from '../../components/DraggableDialog';
 import { useState } from 'react';
+import { processAndCleanBookmarks } from '../privacy/go';
 
 export default function PositionedMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -44,6 +45,12 @@ export default function PositionedMenu() {
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={() => {
+          // Fetching Chrome bookmarks (needs permissions in manifest.json if used in an extension)
+          // chrome.bookmarks.getTree().then(processAndCleanBookmarks);
+        }}>Logout</MenuItem>
+
+
         <MenuItem onLostPointerCapture={handleClose}><DraggableDialog /></MenuItem>
       </Menu>
     </div>

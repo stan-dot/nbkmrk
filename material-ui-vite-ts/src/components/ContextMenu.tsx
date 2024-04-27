@@ -62,31 +62,17 @@ export default function ContextMenu({ children, node }: ContextMenuProps) {
         }
       >
         <MenuItem onClick={handleClose}>
-          <DraggableDialog />
-
+          Close
         </MenuItem>
         <MenuItem onClick={async () => {
-          if (node.isFolder) {
-            const c = await node.getChildren();
-            // todo unsure if should use recursive all levels. native bookmarks use one level
-            c.forEach(b => window.open(b.url))
-          } else {
-            node.open();
-          }
+          node.open();
           handleClose()
         }}
         >
           Open
         </MenuItem>
-
         <MenuItem onClick={async () => {
-          if (node.isFolder) {
-            const c = await node.getChildren();
-            // todo unsure if should use recursive all levels. native bookmarks use one level
-            c.forEach(b => chrome.windows.create({ url: b.url }))
-          } else {
-            node.openPrivate();
-          }
+          node.openPrivate();
           handleClose()
         }}
         >

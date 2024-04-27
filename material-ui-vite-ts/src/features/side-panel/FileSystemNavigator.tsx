@@ -8,7 +8,7 @@ import NodeComponent from '../../components/NodeComponent';
 export default function FileSystemNavigator() {
   const [{ bookmarkTree }] = useAppStateContext();
   return (
-    <Box sx={{ minHeight: 180, flexGrow: 1, maxWidth: 300 }}>
+    <Box sx={{ minHeight: 180, maxHeight: '100%', overflow: 'scroll', flexGrow: 1, maxWidth: 300 }}>
       <TreeView
         aria-label="file system navigator"
         defaultCollapseIcon={<ExpandMoreIcon />}

@@ -1,3 +1,4 @@
+import { Provider } from "../features/privacy/types";
 import { MockBookmarkTreeNode } from "./mockdata";
 
 export default class Node {
@@ -22,18 +23,27 @@ export default class Node {
 
   }
 
-  public open(): void {
+  // native bookmarks use one level
+  public async open(): Promise<void> {
     if (this.object && this.object.url) {
       // window.open(this.object.url)
       chrome.tabs.create({ url: this.object.url })
+    } else if (this.isFolder) {
+      const c = await this.getChildren();
+      const ns = c.map(b => new Node(b))
+      ns.map(b => b.open())
     }
   }
 
-  public openPrivate(): void {
-    if (this.object && this.object.url) {
-      chrome.windows.create({ url: this.object.url, incognito: false })
+  public async openPrivate(): Promise<void> {
+    if (!this.isFolder && this.object && this.object.url) {
+      chrome.windows.create({ url: this.object.url, incognito: true })
     }
-    // this.object && chrome.tabs.create({ url: this.object.url, incognito: true })
+    if (this.isFolder) {
+      const c = await this.getChildren();
+      const ns = c.map(b => new Node(b))
+      ns.map(b => b.openPrivate())
+    }
   }
 
   // todo lazy get path
@@ -53,5 +63,25 @@ export default class Node {
   public async getChildren(): Promise<chrome.bookmarks.BookmarkTreeNode[]> {
     return await chrome.bookmarks.getChildren(this.object.id);
   }
-}
 
+  // Function to process each URL in the bookmarks
+  public async clean(bookmarks: chrome.bookmarks.BookmarkTreeNode[], config: Provider): Promise<void> {
+    const urlRegex = new RegExp(config.urlPattern);
+    const exceptionRegexes = config.exceptions.map(pattern => new RegExp(pattern));
+
+    // Check for exceptions
+    if (this.object.url && !exceptionRegexes.some(regex => regex.test(this.object.url!))) {
+      const u = this.object.url;
+      // Apply rules
+      console.log(`Processing URL: ${u}`);
+      config.rules.forEach(rule => {
+        const ruleRegex = new RegExp(rule);
+        if (ruleRegex.test(u)) {
+          console.log(`Rule ${rule} matches for ${u}`);
+          this.object.url = u.replace(ruleRegex, '');
+        }
+      });
+    }
+  }
+
+}

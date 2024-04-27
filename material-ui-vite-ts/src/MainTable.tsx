@@ -1,9 +1,10 @@
 import { Menu, MenuItem } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import React, { useEffect } from 'react';
 import { Bounce, toast } from 'react-toastify';
 import { displayNewChildren, useAppStateContext } from './StateProvider';
 import Node from './classes/Node';
+import { useBookmarksContext } from './BookmarksProvider';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
@@ -23,6 +24,7 @@ type MainTableProps = {
 
 export function MainTable({ }: MainTableProps) {
   const [{ bookmarksDisplay, path, searchParams }, dispatch] = useAppStateContext();
+  const { deleteBookmark } = useBookmarksContext();
 
   const [selectedRow, setSelectedRow] = React.useState<number>(0);
 
@@ -36,15 +38,18 @@ export function MainTable({ }: MainTableProps) {
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
     mouseY: number;
+    node: Node | undefined;
   } | null>(null);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
-    const n = Number(event.currentTarget.getAttribute('data-id'));
-    setSelectedRow(n);
+    const i = Number(event.currentTarget.getAttribute('data-id'));
+    setSelectedRow(i);
+    const node = bookmarksDisplay[i]
+    console.log(' context menu in n: ', i)
     setContextMenu(
       contextMenu === null
-        ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 }
+        ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4, node }
         : null,
     );
   };
@@ -56,9 +61,9 @@ export function MainTable({ }: MainTableProps) {
   return (
     <div style={{ height: '80%', width: '100%' }}>
       <DataGrid
+        sx={{ minHeight: '80%' }}
         columns={columns}
         rows={bookmarksDisplay}
-
         getRowId={(row: Node) => row.object.id}
         onRowDoubleClick={async (params) => {
           const node: Node = params.row;
@@ -66,6 +71,7 @@ export function MainTable({ }: MainTableProps) {
           await displayNewChildren(node, dispatch)
         }}
         slotProps={{
+          toolbar: GridToolbar,
           row: {
             onContextMenu: handleContextMenu,
             style: { cursor: 'context-menu' },
@@ -91,25 +97,20 @@ export function MainTable({ }: MainTableProps) {
         }}
       >
         <MenuItem onClick={() => {
-          const ro = bookmarksDisplay.at(selectedRow!);
-          if (ro) {
-            ro.open()
-            if (ro.object && ro.object.url && ro.object.url.match(urlRegex)) {
-            } else {
-              toast('not a valid url', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-              })
-            }
+          if (contextMenu && contextMenu.node) {
+            const n = contextMenu.node;
+            n.open();
           }
-        }}>open</MenuItem>
+          contextMenu?.node?.open()
+        }}>Open</MenuItem>
+        <MenuItem onClick={async () => {
+          if (contextMenu && contextMenu.node) {
+            const n = contextMenu.node;
+            n.open();
+            await deleteBookmark(n.object.id, () => { });
+          }
+          contextMenu?.node?.open()
+        }}>Delete</MenuItem>
       </Menu>
     </div >
   );
