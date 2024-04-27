@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import Node from './classes/Node';
 
 interface AppState {
-  path: string; // TODO will be Node array in the end
+  // pathLastName: string;
+  path: string;
   bookmarkTree: Node[];
   bookmarksDisplay: Node[];
   searchParams: URLSearchParams;
@@ -16,6 +17,7 @@ type AppAction =
   | { type: 'SET_SEARCH_PARAMS'; payload: URLSearchParams };
 
 const initialState: AppState = {
+  // pathLastName: window.location.pathname,
   path: window.location.pathname,
   bookmarkTree: [],  // Assuming an object, adjust based on actual data structure
   bookmarksDisplay: [],

@@ -34,7 +34,7 @@ function NodeComponent({ node }: { node: Node }) {
         }}
       >
         {children.length !== 0 && <>
-          {children.map((c, i) => {
+          {children.filter(c => !!!c.url).map((c, i) => {
             const n = new Node(c);
             return <NodeComponent node={n} />
           })}</>}
