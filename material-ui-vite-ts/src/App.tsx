@@ -31,7 +31,7 @@ export default function App() {
           <Grid item xs={12}>
             <SearchAppBar />
             <ButtonGroup>
-              <AddNewModal parentId={'test'} />
+              <AddNewModal />
             </ButtonGroup>
           </Grid>
           <Grid item xs={2}>

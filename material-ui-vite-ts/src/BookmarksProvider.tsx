@@ -12,6 +12,7 @@ const dev: boolean = import.meta.env.DEV;
 
 const t: BookmarksContextType = {
   addBookmark: function (args: chrome.bookmarks.BookmarkCreateArg): Promise<unknown> {
+    window.alert('function now implemented');
     throw new Error('Function not implemented.');
   },
   deleteBookmark: function (id: string): Promise<unknown> {
@@ -37,28 +38,33 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   const addBookmark = async (args: chrome.bookmarks.BookmarkCreateArg) => {
-    // chrome.bookmarks for production
-    return new Promise((resolve, reject) => {
-      chrome.bookmarks.create(args, (result) => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    window.alert('adding new bookmark')
+    await chrome.bookmarks.create(args);
+
+    // return new Promise((resolve, reject) => {
+    //   chrome.bookmarks.create(args, (result) => {
+    //     if (chrome.runtime.lastError) {
+    //       window.alert('error adding new bookmark')
+    //       reject(chrome.runtime.lastError);
+    //     } else {
+    //       window.alert('success adding new bookmark')
+    //       resolve(result);
+    //     }
+    //   });
+    // });
   };
 
   const deleteBookmark = async (id: string, callback: () => void) => {
-    return new Promise((resolve, reject) => {
-      chrome.bookmarks.remove(id, () => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          resolve(() => callback());
-        }
-      });
-    });
+    await chrome.bookmarks.remove(id);
+    // return new Promise((resolve, reject) => {
+    //   chrome.bookmarks.remove(id, () => {
+    //     if (chrome.runtime.lastError) {
+    //       reject(chrome.runtime.lastError);
+    //     } else {
+    //       resolve(() => callback());
+    //     }
+    //   });
+    // });
   };
 
   const value = { addBookmark, deleteBookmark, bookmarks, searchBookmarks };

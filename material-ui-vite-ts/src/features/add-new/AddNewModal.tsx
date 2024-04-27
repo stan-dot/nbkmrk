@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { useState } from 'react';
 import { useBookmarksContext } from '../../BookmarksProvider';
 import { FormControl, FormLabel, Input } from '@mui/material';
+import { useAppStateContext } from '../../StateProvider';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -21,11 +22,10 @@ const style = {
 };
 
 type NestedModalProps = {
-  parentId: string
 
 }
 
-export default function AddNewModal({ parentId }: NestedModalProps) {
+export default function AddNewModal({ }: NestedModalProps) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -44,12 +44,12 @@ export default function AddNewModal({ parentId }: NestedModalProps) {
         aria-describedby="parent-modal-description"
       >
         <Box sx={{ ...style, width: 400 }}>
-          <h2 id="parent-modal-title">Text in a modal</h2>
-          <p id="parent-modal-description">
+          <h2 id="parent-modal-title">Add a new bookmark</h2>
+          {/* <p id="parent-modal-description">
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p>
+          </p> */}
 
-          <NewBookmarkForm parentId={parentId} />
+          <NewBookmarkForm />
         </Box>
       </Modal>
     </div>
@@ -57,18 +57,22 @@ export default function AddNewModal({ parentId }: NestedModalProps) {
 }
 
 type NewBookmarkFormProps = {
-  parentId: string;
 };
 
 
-function NewBookmarkForm({ parentId }: NewBookmarkFormProps) {
+function NewBookmarkForm({ }: NewBookmarkFormProps) {
+  const [{ path }] = useAppStateContext();
   const { addBookmark } = useBookmarksContext();
   const [url, setUrl] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+  const pathLast = path.at(-1);
 
   return <form onSubmit={() => {
-    const createArg: chrome.bookmarks.BookmarkCreateArg = { parentId, title, url };
-    addBookmark(createArg);
+    if (pathLast) {
+      const parentId = pathLast.object.id;
+      const createArg: chrome.bookmarks.BookmarkCreateArg = { parentId, title, url };
+      addBookmark(createArg);
+    }
   }}>
 
     <FormControl>

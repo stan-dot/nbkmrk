@@ -1,25 +1,37 @@
 import { Menu, MenuItem } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bounce, toast } from 'react-toastify';
-import { useAppStateContext } from './StateProvider';
+import { displayNewChildren, useAppStateContext } from './StateProvider';
 import Node from './classes/Node';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
 
 const columns: GridColDef<Node>[] = [
-  { field: 'url', headerName: 'Url', width: 150, valueGetter: (params) => params.row.object.url ?? 'folder' },
-  { field: 'title', headerName: 'Title', width: 150, valueGetter: (params) => params.row.object.title },
+  {
+    field: 'url', headerName: 'Url', width: 150, valueGetter: (params) => {
+      console.log('params: ', params);
+      return params.row.isFolder ? 'folder' : params.row.object.url
+    }
+  },
+  { field: 'title', headerName: 'Title', width: 450, valueGetter: (params) => params.row.object.title },
 ];
 
 type MainTableProps = {
 }
 
 export function MainTable({ }: MainTableProps) {
-  const [{ bookmarksDisplay }, dispatch] = useAppStateContext();
+  const [{ bookmarksDisplay, path, searchParams }, dispatch] = useAppStateContext();
 
   const [selectedRow, setSelectedRow] = React.useState<number>(0);
+
+  useEffect(() => {
+    const lastNode = path.at(-1);
+    if (lastNode) {
+      displayNewChildren(lastNode, dispatch)
+    }
+  }, [path])
 
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
@@ -42,15 +54,16 @@ export function MainTable({ }: MainTableProps) {
   };
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ height: '80%', width: '100%' }}>
       <DataGrid
         columns={columns}
         rows={bookmarksDisplay}
 
         getRowId={(row: Node) => row.object.id}
-        onRowDoubleClick={(params) => {
+        onRowDoubleClick={async (params) => {
           const node: Node = params.row;
-          window.alert(`should change path, includign: ${node.object.title}`)
+          dispatch({ type: 'NAVIGATE', payload: node })
+          await displayNewChildren(node, dispatch)
         }}
         slotProps={{
           row: {
@@ -80,10 +93,8 @@ export function MainTable({ }: MainTableProps) {
         <MenuItem onClick={() => {
           const ro = bookmarksDisplay.at(selectedRow!);
           if (ro) {
+            ro.open()
             if (ro.object && ro.object.url && ro.object.url.match(urlRegex)) {
-              const t: chrome.bookmarks.BookmarkTreeNode = { id: '1', title: ro.object.title, url: ro.object.url };
-              const n = new Node(t)
-              n.open()
             } else {
               toast('not a valid url', {
                 position: "top-right",

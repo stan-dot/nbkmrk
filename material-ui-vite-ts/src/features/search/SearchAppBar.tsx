@@ -1,16 +1,15 @@
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import SearchIcon from '@mui/icons-material/Search';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import PositionedMenu from '../corner-menu/PositionedMenu';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { alpha, styled } from '@mui/material/styles';
+import * as React from 'react';
 import { useState } from 'react';
-import { useAppStateContext } from '../../StateProvider';
+import { getDisplayBasedOnSearch, useAppStateContext } from '../../StateProvider';
+import PositionedMenu from '../corner-menu/PositionedMenu';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,14 +61,18 @@ export default function SearchAppBar() {
   const [{ searchParams }, dispatch] = useAppStateContext();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const changeHandler = (v: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const changeHandler = async (v: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): Promise<void> => {
     const value = v.target.value;
     setSearchTerm(value);
     // todo that is optimistic udpates, right?
     addToSearch(value)
-    const p = new URLSearchParams(value);
+    const titleSearch: Record<string, string> = { title: value }
+    const p = new URLSearchParams(titleSearch);
     dispatch({ type: 'SET_SEARCH_PARAMS', payload: p })
+    await getDisplayBasedOnSearch(p, dispatch)
   };
+
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>

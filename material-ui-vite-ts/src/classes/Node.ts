@@ -1,13 +1,4 @@
-import { GridRowsProp } from "@mui/x-data-grid";
 import { MockBookmarkTreeNode } from "./mockdata";
-import { idID } from "@mui/material/locale";
-
-
-export type MainTableRow = {
-  id: number;
-  url: string;
-  title: string;
-};
 
 export default class Node {
   object: chrome.bookmarks.BookmarkTreeNode | MockBookmarkTreeNode
@@ -15,13 +6,12 @@ export default class Node {
   isFolder: boolean;
 
   constructor(item: chrome.bookmarks.BookmarkTreeNode) {
-    const o: MockBookmarkTreeNode = {
+    this.object = {
       title: item.title,
-      id: item.id
+      id: item.id,
+      url: item.url
     };
-    this.object = o;
     if (item.url) {
-
       const urlObj = new URL(item.url);
       this.domain = urlObj.hostname;
       this.isFolder = false;
@@ -59,10 +49,6 @@ export default class Node {
     return JSON.stringify(self);
   }
 
-  public intoRow(): MainTableRow {
-    // todo change this
-    return { id: parseInt(this.object.id), url: this.object.url ?? "", title: this.object.title }
-  }
 
   public async getChildren(): Promise<chrome.bookmarks.BookmarkTreeNode[]> {
     return await chrome.bookmarks.getChildren(this.object.id);

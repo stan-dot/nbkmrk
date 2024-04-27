@@ -1,16 +1,18 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react'
 import Node from './classes/Node';
+import { MockBookmarkTreeNode } from './classes/mockdata';
 
 interface AppState {
   // pathLastName: string;
-  path: string;
+  path: Node[];
   bookmarkTree: Node[];
   bookmarksDisplay: Node[];
   searchParams: URLSearchParams;
 }
 
 type AppAction =
-  | { type: 'SET_PATH'; payload: string }
+  { type: 'NAVIGATE'; payload: Node }
+  | { type: 'SET_PATH'; payload: Node }
   | { type: "REFRESH_LIST"; payload: null }
   | { type: 'SET_BOOKMARK_TREE'; payload: Node[] }
   | { type: 'SET_BOOKMARKS_DISPLAY'; payload: Node[] }
@@ -18,7 +20,7 @@ type AppAction =
 
 const initialState: AppState = {
   // pathLastName: window.location.pathname,
-  path: window.location.pathname,
+  path: [],
   bookmarkTree: [],  // Assuming an object, adjust based on actual data structure
   bookmarksDisplay: [],
   searchParams: new URLSearchParams(window.location.search),
@@ -36,15 +38,40 @@ async function fetchBookmarks(dispatch: React.Dispatch<AppAction>): Promise<void
   });
 };
 
+
+export async function displayNewChildren(node: Node, dispatch: React.Dispatch<AppAction>): Promise<void> {
+  const c = await node.getChildren();
+  const childNodes: Node[] = c.map(c => new Node(c));
+  dispatch({ type: 'SET_BOOKMARKS_DISPLAY', payload: childNodes })
+}
+
+
+export async function getDisplayBasedOnSearch(searchParams: URLSearchParams, dispatch: React.Dispatch<AppAction>) {
+  const title: string | null = searchParams.get('title');
+  // const url: string | null = searchParams.get('url')
+  if (title) {
+    const bs: MockBookmarkTreeNode[] = await chrome.bookmarks.search(title);
+    const ns = bs.map(b => new Node(b))
+    dispatch({ type: 'SET_BOOKMARKS_DISPLAY', payload: ns })
+  }
+}
+
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
+    case 'NAVIGATE':
+      let n1: Node = action.payload;
+      // displayNewChildren(n1, dispatch)
+      window.history.pushState({}, '', action.payload.object.title);  // Update URL without reloading
+      return { ...state, path: [n1] }
     case 'SET_PATH':
-      window.history.pushState({}, '', action.payload);  // Update URL without reloading
-      return { ...state, path: action.payload };
+      let n2 = action.payload
+      // todo here get the full tree
+      window.history.pushState({}, '', action.payload.object.title);  // Update URL without reloading
+      return { ...state, path: [n2] }
     case 'SET_BOOKMARK_TREE':
       return { ...state, bookmarkTree: action.payload };
     case 'SET_BOOKMARKS_DISPLAY':
-      // todo update this in sync with path change. maybe never set path change on its own
+      // todo update this in sync with path change. maybe never let path change on its own
       return { ...state, bookmarksDisplay: action.payload };
     case 'SET_SEARCH_PARAMS':
       window.history.pushState({}, '', `?${action.payload.toString()}`);
@@ -53,6 +80,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
       throw new Error('Unhandled action type');
   }
 }
+
 const AppStateContext = createContext<[AppState, React.Dispatch<AppAction>]>(undefined!);
 
 interface AppStateProviderProps {

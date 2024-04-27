@@ -9,16 +9,17 @@
 
 - [x] all locally, with a mock object loaded from a data file - not that good
 - [x] imperatively change state of the path https://chat.openai.com/c/e1039576-0fdd-47f1-914a-3f26d199253a
-- [ ] search results table
-- [ ] create a node
-`
-here for reading the local bookmarks page
-https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
-`
-
+- [x] read in the bookmarks here for reading the local bookmarks page https://chat.openai.com/c/97a64375-10c0-4310-8b2d-bf1f1e1558ff
+- [x] search results table
 - [ ] update path on click - just get the path from all that before and read it in - ask chat for the best data structure - nah, just hard code it. if speed is a factor, then catch it from the users
+- [ ] create a node
+- [ ] update the display when onclick the main one
+- [ ] join context menus into one or make it otherwise sensible
 
-- [ ] delete a node
+
+- [ ] bug - when in search mode should reset the url prior to creating new stuff
+
+- [ ] delete a node with context menu
 - [ ] use optimistic updates
 - [ ] corner menu 
   - [ ] exports

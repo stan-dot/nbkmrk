@@ -1,13 +1,9 @@
-import Node from '../classes/Node'
-import { Box } from '@mui/material'
-import ContextMenu from './ContextMenu'
-import DraggableDialog from './DraggableDialog'
-import { useBookmarksContext } from '../BookmarksProvider'
-import DeleteDialog from './DeleteDialog'
 import { TreeItem } from '@mui/x-tree-view/TreeItem'
 import { useEffect, useState } from 'react'
-import { MockBookmarkTreeNode } from '../classes/mockdata'
 import { useAppStateContext } from '../StateProvider'
+import Node from '../classes/Node'
+import { MockBookmarkTreeNode } from '../classes/mockdata'
+import ContextMenu from './ContextMenu'
 
 function NodeComponent({ node }: { node: Node }) {
   const [{ path }, dispatch] = useAppStateContext();
@@ -16,25 +12,24 @@ function NodeComponent({ node }: { node: Node }) {
 
   useEffect(() => {
     node.getChildren().then(c => {
+      // todo make sure this early thing works
       setChildren(c);
     });
   }, [loadingChildren])
 
+  const folderChildren = children.filter(c => !!!c.url)
   return (
     <ContextMenu node={node}>
       <TreeItem nodeId={node.object.id} label={node.object.title}
         onDoubleClick={() => {
-          const t = node.object.title
-          if (path.includes(t)) {
-            dispatch({ type: "SET_PATH", payload: t })
-          }
+          dispatch({ type: "SET_PATH", payload: node })
         }}
         onMouseOver={() => {
           setLoadingChildren(true);
         }}
       >
-        {children.length !== 0 && <>
-          {children.filter(c => !!!c.url).map((c, i) => {
+        {folderChildren.length !== 0 && <>
+          {folderChildren.map((c, i) => {
             const n = new Node(c);
             return <NodeComponent node={n} />
           })}</>}
