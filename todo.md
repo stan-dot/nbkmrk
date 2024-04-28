@@ -29,7 +29,10 @@
 - [ ] open based on title - also need to add ID into the path, like in the original
 
 ## cut and paste
+https://chat.openai.com/c/aa41a940-abc4-4d66-aa9a-37c53e1ca823
 - [ ] context menu features
+  - [ ] cut 
+  - [ ] paste
 
 - [ ] clipboard facade
   - [ ] cut to clipboard - with json serialize
@@ -39,7 +42,8 @@
 ## more features
 
 - [ ] remove empty children
-- [ ] filter
+- [ ] filter - already in the table
+- [ ] smart moving 
 - [ ] path
 - [ ] settings menu - another dialog with saved cookies
 - [ ] remove context tracing links
