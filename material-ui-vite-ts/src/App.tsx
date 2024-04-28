@@ -3,7 +3,7 @@ import { Bounce, ToastContainer } from 'react-toastify';
 import { BookmarksProvider } from './BookmarksProvider';
 import { MainTable } from './MainTable';
 import { AppStateProvider } from './StateProvider';
-import AddNewModal from './features/add-new/AddNewModal';
+import AddNewBookmarkModal from './features/add-new/AddNewBookmarkModal';
 import SearchAppBar from './features/search/SearchAppBar';
 import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,7 +33,7 @@ export default function App() {
             <Grid item xs={12}>
               <SearchAppBar />
               <ButtonGroup>
-                <AddNewModal />
+                <AddNewBookmarkModal />
               </ButtonGroup>
             </Grid>
             <Grid item xs={2}>

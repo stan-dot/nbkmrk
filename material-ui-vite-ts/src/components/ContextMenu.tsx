@@ -79,6 +79,7 @@ export default function ContextMenu({ children, node }: ContextMenuProps) {
           Open incognito
         </MenuItem>
         <MenuItem onClick={handleClose}>
+          Delete
           <DeleteDialog callback={() => deleteBookmark(node.object.id, () => window.alert('ready'))} />
         </MenuItem>
 

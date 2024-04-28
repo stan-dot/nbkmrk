@@ -10,6 +10,10 @@ interface AppState {
   searchParams: URLSearchParams;
 }
 
+const extensionId = chrome.runtime.id;
+const internalUrl = `chrome-extension://${extensionId}/index.html#new-posts`;
+
+
 type AppAction =
   { type: 'NAVIGATE'; payload: Node }
   | { type: 'SET_PATH'; payload: Node }

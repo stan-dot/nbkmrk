@@ -25,7 +25,8 @@
 
 ## bugs
 - [ ] on double click a folder navigation changed
-- [ ] add new node error
+- [ ] add new node error - path changes again and the readout is not right
+- [ ] solve this through parsing the requests right
 
 - [ ] open based on title - also need to add ID into the path, like in the original
 
@@ -56,3 +57,8 @@ https://github.com/ClearURLs/Addon
 - [ ] https://www.willtaylor.blog/client-side-routing-in-vanilla-js/
 - [ ] add a 'useSearch' hook that just returns the necessary nodecs - not needed
 - [ ] make some properties async
+
+## limitations of free tier
+- no multiple selection
+
+

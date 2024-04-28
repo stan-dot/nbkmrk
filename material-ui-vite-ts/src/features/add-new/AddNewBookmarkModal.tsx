@@ -22,7 +22,7 @@ const style = {
 
 type NestedModalProps = {}
 
-export default function AddNewModal({ }: NestedModalProps) {
+export default function AddNewBookmarkModal({ }: NestedModalProps) {
 
   const [{ searchParams }] = useAppStateContext();
   const [open, setOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function AddNewModal({ }: NestedModalProps) {
 
   return (
     <div>
-      <Button disabled={searchParams.size === 0} onClick={handleOpen}>+ Add new bookmark</Button>
+      <Button disabled={searchParams.size !== 0} onClick={handleOpen}>+ Add new bookmark</Button>
       <Modal
         open={open}
         onClose={handleClose}

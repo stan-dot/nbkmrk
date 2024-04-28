@@ -7,6 +7,7 @@ import Node from './classes/Node';
 import { useClipboard } from './features/clipboard/ClipboardProvider';
 import { MockBookmarkTreeNode } from './classes/mockdata';
 import { toast } from 'react-toastify';
+import GenericDialog from './components/GenericDialog';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
@@ -75,46 +76,47 @@ export function MainTable({ }: MainTableProps) {
   };
   const { clipboard, copyToClipboard } = useClipboard();
 
-  return (
-    <div style={{ height: '80%', width: '100%' }} onPaste={async (e) => {
-      e.preventDefault();
-      if (clipboard.length === 0) {
+  const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>): Promise<void> => {
+    e.preventDefault();
+    if (clipboard.length === 0) {
 
-        const clipboardContents = await navigator.clipboard.read();
-        if (clipboardContents.length === 0) {
-          window.alert('no links here')
-          return;
-        }
-        for (const item of clipboardContents) {
-          console.log(' item: ', item);
-          const url: string | undefined = (item as unknown as Record<string, string>)['url']
-          if (url) {
-            const a: chrome.bookmarks.BookmarkCreateArg = {
-              title: url,
-              url: url,
-              parentId: path.at(-1)?.object.id
-            };
-            await addBookmark(a);
-          }
-        }
+      const clipboardContents = await navigator.clipboard.read();
+      if (clipboardContents.length === 0) {
+        window.alert('no links here');
         return;
       }
-      // here for the branch where using the clipboard provider
-      clipboard.forEach(c => {
-        // todo move to the current location
-        const ma: chrome.bookmarks.BookmarkMoveInfo = {
-          index: 0,
-          oldIndex: 0,
-          parentId: '',
-          oldParentId: ''
-        };
-        console.log(c, ma);
+      for (const item of clipboardContents) {
+        console.log(' item: ', item);
+        const url: string | undefined = (item as unknown as Record<string, string>)['url'];
+        if (url) {
+          const a: chrome.bookmarks.BookmarkCreateArg = {
+            title: url,
+            url: url,
+            parentId: path.at(-1)?.object.id
+          };
+          await addBookmark(a);
+        }
+      }
+      return;
+    }
+    // here for the branch where using the clipboard provider
+    clipboard.forEach(c => {
+      // todo move to the current location
+      const ma: chrome.bookmarks.BookmarkMoveInfo = {
+        index: 0,
+        oldIndex: 0,
+        parentId: '',
+        oldParentId: ''
+      };
+      console.log(c, ma);
 
 
-      })
+    });
 
 
-    }}>
+  };
+  return (
+    <div style={{ height: '80%', width: '100%' }} onPaste={handlePaste}>
       <DataGrid
         sx={{ minHeight: '80%' }}
         columns={columns}
@@ -151,13 +153,15 @@ export function MainTable({ }: MainTableProps) {
           },
         }}
       >
-        <MenuItem onClick={() => {
-          if (contextMenu && contextMenu.node) {
-            const n = contextMenu.node;
-            console.log('node ', n)
-            n.open();
-          }
-        }}>Open</MenuItem>
+        <MenuItem onClick={() => { }}>Open
+          <GenericDialog buttonText={'Open'} title={'Open many bookmarks'} callback={() => {
+            if (contextMenu && contextMenu.node) {
+              const n = contextMenu.node;
+              console.log('node ', n)
+              n.open();
+            }
+          }} submitButtonLabel={'Yes, open'} />
+        </MenuItem>
         <MenuItem onClick={async () => {
           if (contextMenu && contextMenu.node) {
             const n = contextMenu.node;
@@ -165,8 +169,9 @@ export function MainTable({ }: MainTableProps) {
             await deleteBookmark(n.object.id, () => { });
           }
           contextMenu?.node?.open()
-        }}>Delete</MenuItem>
-
+        }}>
+          Delete
+        </MenuItem>
         <MenuItem onClick={async (e) => {
           if (clipboard && clipboard.length > 0) {
             console.log('doing the urls from ', clipboard);
@@ -183,6 +188,7 @@ export function MainTable({ }: MainTableProps) {
           await copyUrlsToClipboard(urls);
           window.alert(`urls copied: ${urls}`);
           copyToClipboard(ns);
+          toast(`copied ${ns.length} elements`);
           handleClose();
         }}>
           Copy

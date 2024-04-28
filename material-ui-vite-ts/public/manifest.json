@@ -15,5 +15,15 @@
   "action": {
     "default_popup": "index.html",
     "default_title": "Open the popup"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "*"
+      ],
+      "matches": [
+        "chrome-extension://*index.html"
+      ]
+    }
+  ]
 }
