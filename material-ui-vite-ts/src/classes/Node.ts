@@ -23,7 +23,6 @@ export default class Node {
 
   }
 
-  // native bookmarks use one level
   public async open(): Promise<void> {
     if (this.object && this.object.url) {
       // window.open(this.object.url)
@@ -31,6 +30,8 @@ export default class Node {
     } else if (this.isFolder) {
       const c = await this.getChildren();
       const ns = c.map(b => new Node(b))
+      // native bookmarks use one level
+      // todo warn against opening a large number of bookmarks
       ns.map(b => b.open())
     }
   }

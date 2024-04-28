@@ -5,22 +5,37 @@ import { useBookmarksContext } from './BookmarksProvider';
 import { displayNewChildren, useAppStateContext } from './StateProvider';
 import Node from './classes/Node';
 import { useClipboard } from './features/clipboard/ClipboardProvider';
+import { MockBookmarkTreeNode } from './classes/mockdata';
+import { toast } from 'react-toastify';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
 
+const getAllBookmarkUrls = (bookmarks: MockBookmarkTreeNode[]) => {
+  return bookmarks.map(bookmark => bookmark.url).join('\n');
+};
+
+const copyUrlsToClipboard = async (urls: string) => {
+  try {
+    await navigator.clipboard.writeText(urls);
+    console.log('URLs copied to clipboard!');
+  } catch (error) {
+    console.error('Failed to copy URLs to clipboard:', error);
+  }
+};
+
+
 const columns: GridColDef<Node>[] = [
   {
     field: 'url', headerName: 'Url', width: 150, valueGetter: (params) => {
-      console.log('params: ', params);
+      // console.log('params: ', params);
       return params.row.isFolder ? 'folder' : params.row.object.url
     }
   },
   { field: 'title', headerName: 'Title', width: 450, valueGetter: (params) => params.row.object.title },
 ];
 
-type MainTableProps = {
-}
+type MainTableProps = {}
 
 
 export function MainTable({ }: MainTableProps) {
@@ -139,12 +154,9 @@ export function MainTable({ }: MainTableProps) {
         <MenuItem onClick={() => {
           if (contextMenu && contextMenu.node) {
             const n = contextMenu.node;
-
             console.log('node ', n)
             n.open();
           }
-
-          contextMenu?.node?.open()
         }}>Open</MenuItem>
         <MenuItem onClick={async () => {
           if (contextMenu && contextMenu.node) {
@@ -155,9 +167,23 @@ export function MainTable({ }: MainTableProps) {
           contextMenu?.node?.open()
         }}>Delete</MenuItem>
 
-        <MenuItem onClick={(e) => {
+        <MenuItem onClick={async (e) => {
+          if (clipboard && clipboard.length > 0) {
+            console.log('doing the urls from ', clipboard);
+            const urls = getAllBookmarkUrls(clipboard.map(n => n.object));
+            await copyUrlsToClipboard(urls);
+            window.alert(`urls copied: ${urls}`);
+          } else {
+            toast('No bookmarks to copy');
+          }
+          // NOTE local copy
           const ns: Node[] = bookmarksDisplay.filter((x, i) => selectedRows.includes(i));
+          console.log('doing the urls from the selected stuffs ', ns);
+          const urls = getAllBookmarkUrls(ns.map(n => n.object));
+          await copyUrlsToClipboard(urls);
+          window.alert(`urls copied: ${urls}`);
           copyToClipboard(ns);
+          handleClose();
         }}>
           Copy
         </MenuItem>
@@ -165,6 +191,7 @@ export function MainTable({ }: MainTableProps) {
           const ns: Node[] = bookmarksDisplay.filter((x, i) => selectedRows.includes(i));
           copyToClipboard(ns);
           ns.forEach(n => deleteBookmark(n.object.id, () => { }))
+          handleClose();
         }}>
           Cut
         </MenuItem>
@@ -172,4 +199,3 @@ export function MainTable({ }: MainTableProps) {
     </div >
   );
 }
-

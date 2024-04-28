@@ -8,18 +8,18 @@ function App() {
 
 
 
-  const urlSearchString = window.location.search;
+  // const urlSearchString = window.location.search;
 
   alert(`pathname: ${window.location.pathname}`)
-  const params = new URLSearchParams(urlSearchString);
-  console.log('search params: ', params);
+  // const params = new URLSearchParams(urlSearchString);
+  // console.log('search params: ', params);
   useEffect(() => {
 
     const urlSearchString = window.location.search;
 
     console.log('pathname: ', window.location.pathname)
     const params = new URLSearchParams(urlSearchString);
-    console.log('search params: ', params);
+    // console.log('search params: ', params);
 
   }, []);
 

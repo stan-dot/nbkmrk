@@ -21,6 +21,7 @@
 - [ ] use optimistic updates
 - [ ] corner menu 
   - [ ] exports
+- [ ] popups actually for the delete decisions
 
 ## bugs
 - [ ] on double click a folder navigation changed
@@ -38,6 +39,7 @@ https://chat.openai.com/c/aa41a940-abc4-4d66-aa9a-37c53e1ca823
   - [ ] cut to clipboard - with json serialize
   - [ ] drag and drop contents
   - [ ] copy bookmark to Uri - just using json
+  - [ ] implement moving the bookmarks
 
 ## more features
 
