@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
+import { useAppStateContext } from './StateProvider';
 import Node from './classes/Node';
 
 type BookmarksContextType = {
@@ -30,6 +31,7 @@ export const useBookmarksContext = () => useContext(BookmarksContext);
 // Provider component
 export const BookmarksProvider = ({ children }: { children: React.ReactNode }) => {
 
+  const [{ path }, dispatch] = useAppStateContext();
   const [bookmarks, setBookmarks] = useState<Node[]>([]); // State to hold the list of bookmarks
 
   const searchBookmarks = async (searchString: string, resolve: (a: any[]) => void) => {
@@ -39,19 +41,10 @@ export const BookmarksProvider = ({ children }: { children: React.ReactNode }) =
 
   const addBookmark = async (args: chrome.bookmarks.BookmarkCreateArg) => {
     window.alert('adding new bookmark')
-    await chrome.bookmarks.create(args);
-
-    // return new Promise((resolve, reject) => {
-    //   chrome.bookmarks.create(args, (result) => {
-    //     if (chrome.runtime.lastError) {
-    //       window.alert('error adding new bookmark')
-    //       reject(chrome.runtime.lastError);
-    //     } else {
-    //       window.alert('success adding new bookmark')
-    //       resolve(result);
-    //     }
-    //   });
-    // });
+    const b = await chrome.bookmarks.create(args);
+    const n = new Node(b);
+    dispatch({ type: 'REFRESH_LIST', payload: null })
+    // todo not sure this is right
   };
 
   const deleteBookmark = async (id: string, callback: () => void) => {

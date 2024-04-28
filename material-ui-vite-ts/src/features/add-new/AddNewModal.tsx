@@ -3,9 +3,8 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-import { useBookmarksContext } from '../../BookmarksProvider';
-import { FormControl, FormLabel, Input } from '@mui/material';
 import { useAppStateContext } from '../../StateProvider';
+import { NewBookmarkForm } from './NewBookmarkForm';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -21,10 +20,7 @@ const style = {
   pb: 3,
 };
 
-type NestedModalProps = {
-
-}
-const emptyParams = new URLSearchParams();
+type NestedModalProps = {}
 
 export default function AddNewModal({ }: NestedModalProps) {
 
@@ -39,7 +35,7 @@ export default function AddNewModal({ }: NestedModalProps) {
 
   return (
     <div>
-      <Button disabled={searchParams !== emptyParams} onClick={handleOpen}>+ Add new bookmark</Button>
+      <Button disabled={searchParams.size === 0} onClick={handleOpen}>+ Add new bookmark</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -48,10 +44,6 @@ export default function AddNewModal({ }: NestedModalProps) {
       >
         <Box sx={{ ...style, width: 400 }}>
           <h2 id="parent-modal-title">Add a new bookmark</h2>
-          {/* <p id="parent-modal-description">
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p> */}
-
           <NewBookmarkForm />
         </Box>
       </Modal>
@@ -59,34 +51,4 @@ export default function AddNewModal({ }: NestedModalProps) {
   );
 }
 
-type NewBookmarkFormProps = {
-};
-
-
-function NewBookmarkForm({ }: NewBookmarkFormProps) {
-  const [{ path }] = useAppStateContext();
-  const { addBookmark } = useBookmarksContext();
-  const [url, setUrl] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-  const pathLast = path.at(-1);
-
-  return <form onSubmit={() => {
-    if (pathLast) {
-      const parentId = pathLast.object.id;
-      const createArg: chrome.bookmarks.BookmarkCreateArg = { parentId, title, url };
-      addBookmark(createArg);
-    }
-  }}>
-
-    <FormControl>
-      <FormLabel htmlFor='url'>for url</FormLabel>
-      <Input id='url' type='url' value={url} onChange={e => setUrl(e.target.value)} />
-    </FormControl>
-    <FormControl>
-      <FormLabel htmlFor='title'>for title</FormLabel>
-      <Input id='title' type='text' value={title} onChange={e => setTitle(e.target.value)} />
-    </FormControl>
-    <Button type='submit'>Submit</Button>
-  </form>;
-}
 

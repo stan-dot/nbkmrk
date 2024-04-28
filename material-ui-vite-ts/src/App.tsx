@@ -7,13 +7,14 @@ import AddNewModal from './features/add-new/AddNewModal';
 import SearchAppBar from './features/search/SearchAppBar';
 import FileSystemNavigator from './features/side-panel/FileSystemNavigator';
 import 'react-toastify/dist/ReactToastify.css';
+import { ClipboardProvider } from './features/clipboard/ClipboardProvider';
 
 
 export default function App() {
 
   return <Container maxWidth="xl">
-    <BookmarksProvider>
-      <AppStateProvider>
+    <AppStateProvider>
+      <BookmarksProvider>
         <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -27,25 +28,27 @@ export default function App() {
           theme="light"
           transition={Bounce}
         />
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <SearchAppBar />
-            <ButtonGroup>
-              <AddNewModal />
-            </ButtonGroup>
+        <ClipboardProvider>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <SearchAppBar />
+              <ButtonGroup>
+                <AddNewModal />
+              </ButtonGroup>
+            </Grid>
+            <Grid item xs={2}>
+              <FileSystemNavigator />
+            </Grid>
+            <Grid item xs={8}>
+              {/* <Typography variant="h4" component="h1" sx={{ mb: 2 }}> </Typography> */}
+              <MainTable />
+            </Grid>
+            <Grid item xs={2}></Grid>
           </Grid>
-          <Grid item xs={2}>
-            <FileSystemNavigator />
-          </Grid>
-          <Grid item xs={8}>
-            {/* <Typography variant="h4" component="h1" sx={{ mb: 2 }}> </Typography> */}
-            <MainTable />
-          </Grid>
-          <Grid item xs={2}></Grid>
-        </Grid>
+        </ClipboardProvider>
         <ToastContainer />
-      </AppStateProvider>
-    </BookmarksProvider>
+      </BookmarksProvider>
+    </AppStateProvider>
   </Container >
 }
 

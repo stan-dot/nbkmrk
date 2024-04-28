@@ -1,10 +1,10 @@
 import { Menu, MenuItem } from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import React, { useEffect } from 'react';
-import { Bounce, toast } from 'react-toastify';
+import { useBookmarksContext } from './BookmarksProvider';
 import { displayNewChildren, useAppStateContext } from './StateProvider';
 import Node from './classes/Node';
-import { useBookmarksContext } from './BookmarksProvider';
+import { useClipboard } from './features/clipboard/ClipboardProvider';
 
 const urlRegexString = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
 const urlRegex = new RegExp(urlRegexString);
@@ -22,11 +22,12 @@ const columns: GridColDef<Node>[] = [
 type MainTableProps = {
 }
 
+
 export function MainTable({ }: MainTableProps) {
   const [{ bookmarksDisplay, path, searchParams }, dispatch] = useAppStateContext();
-  const { deleteBookmark } = useBookmarksContext();
+  const { deleteBookmark, addBookmark } = useBookmarksContext();
 
-  const [selectedRow, setSelectedRow] = React.useState<number>(0);
+  const [selectedRows, setSelectedRows] = React.useState<number[]>([0]);
 
   useEffect(() => {
     const lastNode = path.at(-1);
@@ -44,7 +45,7 @@ export function MainTable({ }: MainTableProps) {
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     const i = Number(event.currentTarget.getAttribute('data-id'));
-    setSelectedRow(i);
+    setSelectedRows([i]);
     const node = bookmarksDisplay[i]
     console.log(' context menu in n: ', i)
     setContextMenu(
@@ -57,9 +58,48 @@ export function MainTable({ }: MainTableProps) {
   const handleClose = () => {
     setContextMenu(null);
   };
+  const { clipboard, copyToClipboard } = useClipboard();
 
   return (
-    <div style={{ height: '80%', width: '100%' }}>
+    <div style={{ height: '80%', width: '100%' }} onPaste={async (e) => {
+      e.preventDefault();
+      if (clipboard.length === 0) {
+
+        const clipboardContents = await navigator.clipboard.read();
+        if (clipboardContents.length === 0) {
+          window.alert('no links here')
+          return;
+        }
+        for (const item of clipboardContents) {
+          console.log(' item: ', item);
+          const url: string | undefined = (item as unknown as Record<string, string>)['url']
+          if (url) {
+            const a: chrome.bookmarks.BookmarkCreateArg = {
+              title: url,
+              url: url,
+              parentId: path.at(-1)?.object.id
+            };
+            await addBookmark(a);
+          }
+        }
+        return;
+      }
+      // here for the branch where using the clipboard provider
+      clipboard.forEach(c => {
+        // todo move to the current location
+        const ma: chrome.bookmarks.BookmarkMoveInfo = {
+          index: 0,
+          oldIndex: 0,
+          parentId: '',
+          oldParentId: ''
+        };
+        console.log(c, ma);
+
+
+      })
+
+
+    }}>
       <DataGrid
         sx={{ minHeight: '80%' }}
         columns={columns}
@@ -99,8 +139,11 @@ export function MainTable({ }: MainTableProps) {
         <MenuItem onClick={() => {
           if (contextMenu && contextMenu.node) {
             const n = contextMenu.node;
+
+            console.log('node ', n)
             n.open();
           }
+
           contextMenu?.node?.open()
         }}>Open</MenuItem>
         <MenuItem onClick={async () => {
@@ -111,6 +154,20 @@ export function MainTable({ }: MainTableProps) {
           }
           contextMenu?.node?.open()
         }}>Delete</MenuItem>
+
+        <MenuItem onClick={(e) => {
+          const ns: Node[] = bookmarksDisplay.filter((x, i) => selectedRows.includes(i));
+          copyToClipboard(ns);
+        }}>
+          Copy
+        </MenuItem>
+        <MenuItem onClick={(e) => {
+          const ns: Node[] = bookmarksDisplay.filter((x, i) => selectedRows.includes(i));
+          copyToClipboard(ns);
+          ns.forEach(n => deleteBookmark(n.object.id, () => { }))
+        }}>
+          Cut
+        </MenuItem>
       </Menu>
     </div >
   );
